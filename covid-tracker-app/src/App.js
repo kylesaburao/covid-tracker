@@ -32,7 +32,6 @@ function App() {
 
       for (let key in data) {
         if (keys.has(key)) {
-          console.log(data[key]);
           displayedData[key] = data[key];
         }
       }
