@@ -20,6 +20,7 @@ const TempDataDisplay = ({ data }) => (
 function App() {
   // Temporary data display
   const [tempData, setTempData] = useState({});
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     axios.get("http://localhost:81/proxy/summary").then((res) => {
@@ -37,13 +38,18 @@ function App() {
       }
 
       setTempData(displayedData);
+      setReady(true);
     });
   }, []);
 
   return (
     <div>
       <h1>Test Data</h1>
-      <TempDataDisplay data={tempData}></TempDataDisplay>
+      {ready ? (
+        <TempDataDisplay data={tempData}></TempDataDisplay>
+      ) : (
+        <p>Loading</p>
+      )}
     </div>
   );
 }
