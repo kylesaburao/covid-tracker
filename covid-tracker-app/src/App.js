@@ -2,19 +2,23 @@ import "./App.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const TempDataDisplay = ({ data }) => (
-  <table>
-    <tbody>
-      {Object.entries(data).map(([key, value]) => {
-        return (
-          <tr key={key}>
-            <td>{key}</td>
-            <td>{value}</td>
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
+import Card from "@material-ui/core/Card";
+
+const Summary = ({ data }) => (
+  <Card>
+    <table>
+      <tbody>
+        {Object.entries(data).map(([key, value]) => {
+          return (
+            <tr key={key}>
+              <td>{key}</td>
+              <td>{value}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </Card>
 );
 
 function App() {
@@ -22,33 +26,40 @@ function App() {
   const [tempData, setTempData] = useState({});
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    axios.get("http://localhost:81/proxy/summary").then((res) => {
-      console.log("polling");
-      const data = res.data.data[0];
-      const keys = new Set(["latest_date", "total_cases", "total_vaccinated"]);
+  const API_URL = "http://localhost:81/proxy";
+  const API_LOCATIONS = {
+    summary: "/summary",
+  };
 
+  useEffect(() => {
+    axios.get(`${API_URL}${API_LOCATIONS.summary}`).then((res) => {
+      const createDataTitle = (title) => {
+        return title
+          .split("_")
+          .map((word) => {
+            return word.length > 0
+              ? `${word.charAt(0).toLocaleUpperCase()}${word.substring(1)}`
+              : word;
+          })
+          .join(" ");
+      };
+
+      const data = res.data.data[0];
       const displayedData = {};
 
       for (let key in data) {
-        if (keys.has(key)) {
-          displayedData[key] = data[key];
-        }
+        displayedData[createDataTitle(key)] = data[key];
       }
 
       setTempData(displayedData);
       setReady(true);
     });
-  }, []);
+  }, [API_LOCATIONS.summary]);
 
   return (
     <div>
       <h1>Test Data</h1>
-      {ready ? (
-        <TempDataDisplay data={tempData}></TempDataDisplay>
-      ) : (
-        <p>Loading</p>
-      )}
+      {ready ? <Summary data={tempData}></Summary> : <p>Loading</p>}
     </div>
   );
 }
