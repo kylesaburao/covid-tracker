@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import Card from "@material-ui/core/Card";
 
 import * as api from "./api/api";
+import "./Province.css";
 
 export default function Province({ provincialData }) {
   const updateTime = new Date(Date.parse(provincialData.updated_at));
   const dataReported = provincialData.data_status.includes("Reported");
   const reportText = dataReported
-    ? `Updated at ${updateTime.toLocaleTimeString()}`
-    : "Waiting for report";
+    ? `Updated today at ${updateTime.toLocaleTimeString()}`
+    : "Waiting for daily report";
 
   const [currentReport, setCurrentReport] = useState({});
 
@@ -24,7 +25,7 @@ export default function Province({ provincialData }) {
   }, [provincialData.code]);
 
   return (
-    <Card>
+    <Card class="card">
       <h2>{provincialData.name}</h2>
       <p>
         <em>{reportText}</em>
@@ -37,6 +38,10 @@ export default function Province({ provincialData }) {
           </tr>
           {dataReported && (
             <>
+              <tr>
+                <th>Δ Vaccinations</th>
+                <td>{currentReport.change_vaccinated}</td>
+              </tr>
               <tr>
                 <th>Δ Cases</th>
                 <td>{currentReport.change_cases}</td>
