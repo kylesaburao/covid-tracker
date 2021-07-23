@@ -4,9 +4,12 @@ import React, { useState, useEffect } from "react";
 import Card from "@material-ui/core/Card";
 import * as api from "./api/api";
 
+import Province from "./Province";
+
 const Summary = ({ data }) => (
   <Card>
-    <table>
+    <h2>Canada</h2>
+    {/* <table>
       <tbody>
         {Object.entries(data).map(([key, value]) => {
           return (
@@ -17,26 +20,44 @@ const Summary = ({ data }) => (
           );
         })}
       </tbody>
-    </table>
+    </table> */}
   </Card>
 );
+
+const ProvincialList = ({ provinces }) => {
+  return (
+    <ul style={{ listStyleType: "none" }}>
+      {provinces &&
+        provinces.map((province) => (
+          <li key={province.id}>
+            <Province provincialData={province}></Province>
+          </li>
+        ))}
+    </ul>
+  );
+};
 
 function App() {
   // Temporary data display
   const [tempData, setTempData] = useState({});
-  const [ready, setReady] = useState(false);
+
+  const [provincialData, setProvincialData] = useState([]);
 
   useEffect(() => {
     api.getSummary((data) => {
       setTempData(data);
-      setReady(true);
+    });
+
+    api.getProvinces((data) => {
+      setProvincialData(data);
     });
   }, []);
 
   return (
     <div>
       <h1>Test Data</h1>
-      {ready ? <Summary data={tempData}></Summary> : <p>Loading</p>}
+      <Summary data={tempData}></Summary>
+      <ProvincialList provinces={provincialData}></ProvincialList>
     </div>
   );
 }
