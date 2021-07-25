@@ -1,8 +1,23 @@
 .card {
-  padding: 0.5em;
+  padding: 0.25em;
   margin: 0 0 1em 0;
+  display: inline-block;
+  width: 20em;
+
+}
+
+th {
+  text-align: left;
+  padding-right: 1em;
 }
 
 td {
   padding: 0.15em;
+  padding-right: 1em;
+  text-align: right;
 }
+
+td:nth-of-type(2) {
+  font-style: italic;
+}
+

@@ -63,12 +63,12 @@ export function getProvinces(callback, geographicOnly = true) {
       callback(result.data);
     },
     null,
-    { geo_only: true }
+    { geo_only: geographicOnly }
   );
 }
 
-export function getProvincalReport(callback, provinceCode, date = null) {
-  if (!date) {
+export function getProvincialReport(callback, provinceCode, date = null) {
+  if (date === null) {
     const currentDate = new Date(Date.now());
     date = `${currentDate.getFullYear()}-${
       currentDate.getMonth() + 1
