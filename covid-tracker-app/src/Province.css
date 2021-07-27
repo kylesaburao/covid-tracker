@@ -3,7 +3,10 @@
   margin: 0 0 1em 0;
   display: inline-block;
   width: 20em;
+}
 
+.card h2 {
+  margin-top: 0;
 }
 
 th {

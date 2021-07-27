@@ -4,6 +4,7 @@ import axios from "axios";
   https://api.covid19tracker.ca/docs/1.0/overview
 
 
+  https://opencovid.ca/api/#version
 
 */
 
@@ -16,6 +17,20 @@ const API_LOCATIONS = {
   provinces: "/provinces",
   regions: "/regions",
 };
+
+function _daysFrom(date, delta = 1) {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + delta);
+  return newDate;
+}
+
+export function daysFromNow(delta = 0) {
+  return _daysFrom(new Date(Date.now()), delta);
+}
+
+function _toAPICompatibleDate(date = daysFromNow(0)) {
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+}
 
 function _get(location, onSuccess, onFailure = null, params = {}) {
   axios
@@ -67,12 +82,20 @@ export function getProvinces(callback, geographicOnly = true) {
   );
 }
 
-export function getProvincialReport(callback, provinceCode, date = null) {
-  if (date === null) {
-    const currentDate = new Date(Date.now());
-    date = `${currentDate.getFullYear()}-${
-      currentDate.getMonth() + 1
-    }-${currentDate.getDate()}`;
+export function getProvincialReport(
+  callback,
+  provinceCode,
+  date = daysFromNow(0),
+  startDate = null
+) {
+  let params = {};
+
+  if (startDate !== null) {
+    params["after"] = _toAPICompatibleDate(startDate);
+  } else if (date !== null) {
+    params["date"] = _toAPICompatibleDate(date);
+  } else {
+    throw "Invalid arguments";
   }
 
   _get(
@@ -81,8 +104,6 @@ export function getProvincialReport(callback, provinceCode, date = null) {
       callback(result.data);
     },
     null,
-    {
-      date: date,
-    }
+    params
   );
 }
