@@ -54,7 +54,7 @@ function _get(location, onSuccess, onFailure, params = {}) {
     });
 }
 
-export function getSummary(callback) {
+export function getSummary() {
   const createDataTitle = (title) => {
     return title
       .split("_")
@@ -66,15 +66,17 @@ export function getSummary(callback) {
       .join(" ");
   };
 
-  _get(API_LOCATIONS.summary, (result) => {
-    const data = result.data.data[0];
-    const displayedData = {};
+  return new Promise((resolve, reject) => {
+    _get(API_LOCATIONS.summary, (result) => {
+      const data = result.data.data[0];
+      const displayedData = {};
 
-    Object.entries(data).forEach(([key, value]) => {
-      displayedData[createDataTitle(key)] = value;
+      Object.entries(data).forEach(([key, value]) => {
+        displayedData[createDataTitle(key)] = value;
+      });
+
+      resolve(displayedData);
     });
-
-    callback(displayedData);
   });
 }
 
@@ -93,13 +95,11 @@ export function getProvinces(geographicOnly = true) {
 
 /**
  *
- * @param {*} callback Data processing function for successful retrievals
  * @param {*} provinceCode Provincial code as per API specifications
  * @param {*} date Date of report
  * @param {*} startDate Starting date of a number of consecutive reports to today. Overrides date.
  */
 export function getProvincialReport(
-  callback,
   provinceCode,
   date = daysFromNow(0),
   startDate = null
@@ -114,12 +114,14 @@ export function getProvincialReport(
     throw new Error("Invalid arguments");
   }
 
-  _get(
-    `${API_LOCATIONS.reports}/province/${provinceCode}`,
-    (result) => {
-      callback(result.data);
-    },
-    null,
-    params
-  );
+  return new Promise((resolve, reject) => {
+    _get(
+      `${API_LOCATIONS.reports}/province/${provinceCode}`,
+      (result) => {
+        resolve(result.data);
+      },
+      null,
+      params
+    );
+  });
 }

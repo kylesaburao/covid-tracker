@@ -11,7 +11,7 @@ const annotateValueSign = (value) => {
     : "N/A";
 };
 
-export default function Province({ provincialData, provincialReports }) {
+export default function Province({ provincialData }) {
   const updateTime = new Date(Date.parse(provincialData.updated_at));
   const dataReported = provincialData.data_status.includes("Reported");
   const reportText = dataReported
@@ -22,11 +22,11 @@ export default function Province({ provincialData, provincialReports }) {
 
   useEffect(() => {
     if (dataReported) {
-      api.getProvincialReport((data) => {
+      api.getProvincialReport(provincialData.code).then((data) => {
         if (data && data.data.length > 0) {
           setCurrentReport(data.data[0]);
         }
-      }, provincialData.code);
+      });
     }
   }, [provincialData.code, dataReported]);
 

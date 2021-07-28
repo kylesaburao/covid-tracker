@@ -37,9 +37,7 @@ const ProvincialList = ({ provinces }) => {
       {provinceList &&
         provinceList.map((province) => (
           <Grid item key={province.id}>
-            <Province
-              provincialData={province}
-            ></Province>
+            <Province provincialData={province}></Province>
           </Grid>
         ))}
     </Grid>
@@ -48,10 +46,11 @@ const ProvincialList = ({ provinces }) => {
 
 function App() {
   const [provincialData, setProvincialData] = useState([]);
-  const [provincialReports, setProvincialReports] = useState({});
 
   useEffect(() => {
-    // api?
+    api.getProvinces().then((data) => {
+      setProvincialData(data);
+    });
   }, []);
 
   return (
