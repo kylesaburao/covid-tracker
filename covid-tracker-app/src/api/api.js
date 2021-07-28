@@ -1,4 +1,9 @@
 import axios from "axios";
+import { setupCache } from "axios-cache-adapter";
+
+/*
+  https://api.covid19tracker.ca/docs/1.0/overview
+*/
 
 const API_URL = "http://localhost:81/proxy";
 const API_LOCATIONS = {
@@ -9,6 +14,45 @@ const API_LOCATIONS = {
   provinces: "/provinces",
   regions: "/regions",
 };
+
+const axiosCache = setupCache({ maxAge: 1000 * 60 });
+const axiosAPI = axios.create({ adapter: axiosCache.adapter });
+
+function _constructURL(location) {
+  return `${API_URL}${location}`;
+}
+
+function _daysFrom(date, delta = 1) {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + delta);
+  return newDate;
+}
+
+export function daysFromNow(delta = 0) {
+  return _daysFrom(new Date(Date.now()), delta);
+}
+
+export function currentTime() {
+  return daysFromNow().getTime();
+}
+
+function _toAPICompatibleDate(date = daysFromNow(0)) {
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+}
+
+function _get(location, onSuccess, onFailure, params = {}) {
+  axiosAPI({ url: _constructURL(location), method: "GET", params: params })
+    .then((result) => {
+      onSuccess(result);
+    })
+    .catch((error) => {
+      if (onFailure) {
+        onFailure(error);
+      } else {
+        console.log(`API ERROR: ${error}`);
+      }
+    });
+}
 
 export function getSummary(callback) {
   const createDataTitle = (title) => {
@@ -22,8 +66,8 @@ export function getSummary(callback) {
       .join(" ");
   };
 
-  axios.get(`${API_URL}${API_LOCATIONS.summary}`).then((res) => {
-    const data = res.data.data[0];
+  _get(API_LOCATIONS.summary, (result) => {
+    const data = result.data.data[0];
     const displayedData = {};
 
     Object.entries(data).forEach(([key, value]) => {
@@ -32,4 +76,41 @@ export function getSummary(callback) {
 
     callback(displayedData);
   });
+}
+
+export function getProvinces(callback, geographicOnly = true) {
+  _get(
+    API_LOCATIONS.provinces,
+    (result) => {
+      callback(result.data);
+    },
+    null,
+    { geo_only: geographicOnly }
+  );
+}
+
+export function getProvincialReport(
+  callback,
+  provinceCode,
+  date = daysFromNow(0),
+  startDate = null
+) {
+  let params = {};
+
+  if (startDate !== null) {
+    params["after"] = _toAPICompatibleDate(startDate);
+  } else if (date !== null) {
+    params["date"] = _toAPICompatibleDate(date);
+  } else {
+    throw "Invalid arguments";
+  }
+
+  _get(
+    `${API_LOCATIONS.reports}/province/${provinceCode}`,
+    (result) => {
+      callback(result.data);
+    },
+    null,
+    params
+  );
 }
