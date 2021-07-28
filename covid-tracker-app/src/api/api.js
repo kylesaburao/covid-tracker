@@ -1,11 +1,8 @@
 import axios from "axios";
+import { setupCache } from "axios-cache-adapter";
 
 /*
   https://api.covid19tracker.ca/docs/1.0/overview
-
-
-  https://opencovid.ca/api/#version
-
 */
 
 const API_URL = "http://localhost:81/proxy";
@@ -18,6 +15,13 @@ const API_LOCATIONS = {
   regions: "/regions",
 };
 
+const axiosCache = setupCache({ maxAge: 1000 * 60 });
+const axiosAPI = axios.create({ adapter: axiosCache.adapter });
+
+function _constructURL(location) {
+  return `${API_URL}${location}`;
+}
+
 function _daysFrom(date, delta = 1) {
   const newDate = new Date(date);
   newDate.setDate(newDate.getDate() + delta);
@@ -28,13 +32,16 @@ export function daysFromNow(delta = 0) {
   return _daysFrom(new Date(Date.now()), delta);
 }
 
+export function currentTime() {
+  return daysFromNow().getTime();
+}
+
 function _toAPICompatibleDate(date = daysFromNow(0)) {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
 
-function _get(location, onSuccess, onFailure = null, params = {}) {
-  axios
-    .get(`${API_URL}${location}`, { params: params })
+function _get(location, onSuccess, onFailure, params = {}) {
+  axiosAPI({ url: _constructURL(location), method: "GET", params: params })
     .then((result) => {
       onSuccess(result);
     })
