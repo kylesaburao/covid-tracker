@@ -11,7 +11,7 @@ const annotateValueSign = (value) => {
     : "N/A";
 };
 
-export default function Province({ provincialData }) {
+export default function Province({ provincialData, provincialReports }) {
   const updateTime = new Date(Date.parse(provincialData.updated_at));
   const dataReported = provincialData.data_status.includes("Reported");
   const reportText = dataReported

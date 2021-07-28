@@ -78,17 +78,26 @@ export function getSummary(callback) {
   });
 }
 
-export function getProvinces(callback, geographicOnly = true) {
-  _get(
-    API_LOCATIONS.provinces,
-    (result) => {
-      callback(result.data);
-    },
-    null,
-    { geo_only: geographicOnly }
-  );
+export function getProvinces(geographicOnly = true) {
+  return new Promise((resolve, reject) => {
+    _get(
+      API_LOCATIONS.provinces,
+      (result) => {
+        resolve(result.data);
+      },
+      null,
+      { geo_only: geographicOnly }
+    );
+  });
 }
 
+/**
+ *
+ * @param {*} callback Data processing function for successful retrievals
+ * @param {*} provinceCode Provincial code as per API specifications
+ * @param {*} date Date of report
+ * @param {*} startDate Starting date of a number of consecutive reports to today. Overrides date.
+ */
 export function getProvincialReport(
   callback,
   provinceCode,
@@ -102,7 +111,7 @@ export function getProvincialReport(
   } else if (date !== null) {
     params["date"] = _toAPICompatibleDate(date);
   } else {
-    throw "Invalid arguments";
+    throw new Error("Invalid arguments");
   }
 
   _get(
