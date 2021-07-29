@@ -19,10 +19,10 @@ export default function Province({ provincialData }) {
   const dataReported = provincialData.data_status.includes(REPORTED_STATUS);
   const reportText = dataReported
     ? `Updated today at ${updateTime.toLocaleTimeString()}`
-    : "Daily report unavailable";
+    : "Current day update unavailable";
 
   const [currentReport, setCurrentReport] = useState({
-    message: "Unavailable",
+    available: false,
   });
   const [dayWindow, setDayWindow] = useState(DEFAULT_DAY_WINDOW);
 
@@ -48,7 +48,7 @@ export default function Province({ provincialData }) {
           const filteredData = data.data;
           const dayCount = filteredData.length;
 
-          const processedData = Object.entries(
+          let processedData = Object.entries(
             filteredData.reduce((accum, currentDay) => {
               reportedKeys.forEach((key) => {
                 if (!(key in accum)) {
@@ -73,6 +73,8 @@ export default function Province({ provincialData }) {
             return acuum;
           }, {});
 
+          processedData.available = true;
+
           setCurrentReport(processedData);
         }
       });
@@ -91,7 +93,7 @@ export default function Province({ provincialData }) {
               <th>Population</th>
               <td>{provincialData.population}</td>
             </tr>
-            {dataReported && (
+            {currentReport.available && (
               <>
                 <tr>
                   <th>Vaccinations</th>
