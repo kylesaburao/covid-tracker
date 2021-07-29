@@ -14,6 +14,82 @@ const _annotateValueSign = (value, toInteger = true) => {
     : "N/A";
 };
 
+class Statistics {
+  constructor(dailyValues) {
+    const CHANGE_WINDOWS = [1, 7];
+    const CHANGE_KEYS =
+      dailyValues.length > 0
+        ? Object.keys(dailyValues[0]).filter((key) => this._isChange(key))
+        : [];
+
+    this.data = dailyValues;
+    this.days = this.data.length;
+
+    this.statistics = {
+      totals: this._extractTotals(this.data),
+      changes: {},
+    };
+
+    // Calculate the window average for each change key
+    CHANGE_KEYS.forEach((key) => {
+      CHANGE_WINDOWS.forEach((window) => {
+        let actualWindow = 0;
+        let min = undefined;
+        let max = 0;
+        let average = 0;
+
+        for (
+          let i = 0;
+          i < window && 0 <= this.days - i - 1 && this.days - i - 1 < this.days;
+          ++i
+        ) {
+          const value = this.data[this.days - i - 1][key];
+
+          if (min === undefined || value < min) {
+            min = value;
+          }
+
+          if (value > max) {
+            max = value;
+          }
+
+          average += value;
+          actualWindow++;
+        }
+
+        average /= this.days;
+
+        this.statistics.changes[key] = {
+          ...this.statistics.changes[key],
+          [actualWindow]: { min, max, average },
+        };
+      });
+    });
+  }
+
+  _extractTotals(data) {
+    let totals = {};
+
+    if (data.length > 0) {
+      Object.entries(data[data.length - 1]).forEach(([key, value]) => {
+        if (this._isTotal(key)) {
+          totals[key] = value;
+        }
+      });
+    }
+
+    return totals;
+  }
+
+  _isTotal(key) {
+    return key.startsWith("total_");
+  }
+
+  _isChange(key) {
+    return key.startsWith("change_");
+  }
+}
+
 export default function Province({ provincialData }) {
   const updateTime = new Date(Date.parse(provincialData.updated_at));
   const dataReported = provincialData.data_status.includes(REPORTED_STATUS);
@@ -46,36 +122,8 @@ export default function Province({ provincialData }) {
       .then((data) => {
         if (data && data.data.length > 0) {
           const filteredData = data.data;
-          const dayCount = filteredData.length;
-
-          let processedData = Object.entries(
-            filteredData.reduce((accum, currentDay) => {
-              reportedKeys.forEach((key) => {
-                if (!(key in accum)) {
-                  accum[key] = 0;
-                }
-
-                if (key.startsWith("total_")) {
-                  accum[key] = currentDay[key];
-                } else if (key.startsWith("change_")) {
-                  accum[key] += currentDay[key];
-                }
-              });
-
-              return accum;
-            }, {})
-          ).reduce((acuum, [key, value]) => {
-            acuum[key] = value;
-            if (key.includes("change_")) {
-              acuum[key] /= dayCount;
-            }
-
-            return acuum;
-          }, {});
-
-          processedData.available = true;
-
-          setCurrentReport(processedData);
+          const statistics = new Statistics(filteredData);
+          console.log(provincialData.code, statistics);
         }
       });
   }, [provincialData.code, dayWindow]);

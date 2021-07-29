@@ -119,7 +119,7 @@ export function getProvincialReport(
       `${API_LOCATIONS.reports}/province/${provinceCode}`,
       (result) => {
         resolve(result.data);
-        console.log(result.data);
+        // console.log(result.data);
       },
       null,
       params
