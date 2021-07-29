@@ -41,6 +41,7 @@ function _toAPICompatibleDate(date = daysFromNow(0)) {
 }
 
 function _get(location, onSuccess, onFailure, params = {}) {
+  console.log("GET", currentTime(), location, params);
   axiosAPI({ url: _constructURL(location), method: "get", params: params })
     .then(async (result) => {
       onSuccess(result);
@@ -114,12 +115,13 @@ export function getProvincialReport(
     throw new Error("Invalid arguments");
   }
 
+  params = { ...params, fill_dates: false };
+
   return new Promise((resolve, reject) => {
     _get(
       `${API_LOCATIONS.reports}/province/${provinceCode}`,
       (result) => {
         resolve(result.data);
-        // console.log(result.data);
       },
       null,
       params
