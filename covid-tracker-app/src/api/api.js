@@ -15,7 +15,7 @@ const API_LOCATIONS = {
   regions: "/regions",
 };
 
-const axiosCache = setupCache({ maxAge: 1000 * 60 });
+const axiosCache = setupCache({ maxAge: 1000 * 60, exclude: { query: false } });
 const axiosAPI = axios.create({ adapter: axiosCache.adapter });
 
 function _constructURL(location) {
@@ -41,8 +41,8 @@ function _toAPICompatibleDate(date = daysFromNow(0)) {
 }
 
 function _get(location, onSuccess, onFailure, params = {}) {
-  axiosAPI({ url: _constructURL(location), method: "GET", params: params })
-    .then((result) => {
+  axiosAPI({ url: _constructURL(location), method: "get", params: params })
+    .then(async (result) => {
       onSuccess(result);
     })
     .catch((error) => {
@@ -119,6 +119,7 @@ export function getProvincialReport(
       `${API_LOCATIONS.reports}/province/${provinceCode}`,
       (result) => {
         resolve(result.data);
+        console.log(result.data);
       },
       null,
       params
