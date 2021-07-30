@@ -10,7 +10,6 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
 } from "recharts";
 
 import * as api from "./api/api";
@@ -128,12 +127,12 @@ export default function Province({ provincialData }) {
   return (
     <>
       <h2>{provincialData.name}</h2>
-      <p>
-        <em>{reportText}</em>
-      </p>
 
       <Grid container spacing={3}>
         <Grid item>
+          <p>
+            <em>{reportText}</em>
+          </p>
           <Grid
             container
             direction="column"

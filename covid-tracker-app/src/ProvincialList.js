@@ -1,7 +1,7 @@
 import React from "react";
-import { MenuItem, MenuList, Paper } from "@material-ui/core";
+import { MenuItem, MenuList } from "@material-ui/core";
 
-export default function ProvincialList({ provinces, selectedProvince, setSelectedProvince }) {
+export default function ProvincialList({ provinces, setSelectedProvince }) {
   return (
     <MenuList>
       {provinces.map((province) => (
@@ -16,20 +16,4 @@ export default function ProvincialList({ provinces, selectedProvince, setSelecte
       ))}
     </MenuList>
   );
-  // return (
-  //   <Grid
-  //     container
-  //     direction="row"
-  //     justifyContent="space-evenly"
-  //     alignItems="flex-start"
-  //     spacing={1}
-  //   >
-  //     {provinceList &&
-  //       provinceList.map((province) => (
-  //         <Grid item key={province.id}>
-  //           <Province provincialData={province}></Province>
-  //         </Grid>
-  //       ))}
-  //   </Grid>
-  // );
 }
