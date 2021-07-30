@@ -1,7 +1,14 @@
 import React from "react";
 import { MenuItem, MenuList } from "@material-ui/core";
 
-export default function ProvincialList({ provinces, setSelectedProvince }) {
+export default function ProvincialList({
+  provinces,
+  setSelectedProvince,
+  selectedProvince,
+}) {
+  console.log(provinces);
+  const isReported = (province) => province.data_status === "Reported";
+
   return (
     <MenuList>
       {provinces.map((province) => (
@@ -10,8 +17,22 @@ export default function ProvincialList({ provinces, setSelectedProvince }) {
           onClick={() => {
             setSelectedProvince(province.code);
           }}
+          selected={province.code === selectedProvince}
         >
-          {province.name}
+          <span>
+            {province.name}
+            {!isReported(province) && (
+              <span
+                style={{
+                  fontSize: "smaller",
+                  fontStyle: "italic",
+                }}
+              >
+                {" "}
+                Unreported
+              </span>
+            )}
+          </span>
         </MenuItem>
       ))}
     </MenuList>

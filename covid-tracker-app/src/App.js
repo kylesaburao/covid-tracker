@@ -32,15 +32,15 @@ function App() {
   return (
     <div>
       <h1>Provincial Data</h1>
-      <Grid container spacing={10}>
-        <Grid item>
+      <Grid container spacing={1}>
+        <Grid item xs={3}>
           <ProvincialList
             provinces={provincialData}
             selectedProvince={selectedProvince}
             setSelectedProvince={setSelectedProvince}
           ></ProvincialList>
         </Grid>
-        <Grid item>
+        <Grid item xs={9}>
           {selectedProvince && selectedProvince in provincialMap && (
             <Province
               provincialData={provincialMap[selectedProvince]}

@@ -49,9 +49,8 @@ function _get(location, onSuccess, onFailure, params = {}) {
     .catch((error) => {
       if (onFailure) {
         onFailure(error);
-      } else {
-        console.log(`API ERROR: ${error}`);
       }
+      console.log(`API ERROR: ${error}`);
     });
 }
 
@@ -88,7 +87,7 @@ export function getProvinces(geographicOnly = true) {
       (result) => {
         resolve(result.data);
       },
-      null,
+      reject,
       { geo_only: geographicOnly }
     );
   });
@@ -123,7 +122,7 @@ export function getProvincialReport(
       (result) => {
         resolve(result.data);
       },
-      null,
+      reject,
       params
     );
   });

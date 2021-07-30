@@ -1,0 +1,22 @@
+.status-title {
+    font-weight: bolder;
+}
+
+.status-total {
+  font-weight: bold;
+  font-size: larger;
+}
+
+.status-change {
+  font-style: italic;
+  font-size: smaller;
+}
+
+p[class*="status"] {
+    padding: .25em;
+    margin: 0;
+}
+
+.status-item {
+    padding: .25em;
+}

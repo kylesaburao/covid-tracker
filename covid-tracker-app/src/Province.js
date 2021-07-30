@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import {
@@ -10,86 +10,51 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 
 import * as api from "./api/api";
 import "./Province.css";
 import Statistics from "./api/statistics";
+import StatusBar from "./province/StatusBar";
 
 const REPORTED_STATUS = "Reported";
 const DEFAULT_DAY_WINDOW = 1;
 
-const _annotateValueSign = (value, toInteger = true) => {
-  return value !== undefined && value !== null
-    ? `${value >= 0 ? "+" : ""}${toInteger ? value.toFixed(0) : value}`
-    : "N/A";
-};
+function DataGraph({ statistics, keys = ["change_cases"] }) {
+  const createDataPoint = (day, keys) => {
+    let data = keys.reduce((accum, key) => {
+      if (keys.includes(key)) {
+        accum[key] = day[key];
+      }
+      return accum;
+    }, {});
 
-function DataGraph({ statistics }) {
-  // const
+    data["date"] = day.date;
 
-  const createDataPoint = ({
-    date,
-    change_cases,
-    change_vaccinations,
-    change_fatalities,
-  }) => {
-    return { date, change_cases, change_vaccinations, change_fatalities };
+    return data;
   };
 
-  const serializeData = (keysTODO = []) => {
-    let series = statistics.data.map((x) => createDataPoint(x));
+  const serializeData = (keys) => {
+    let series = statistics.data.map((x) => createDataPoint(x, keys));
     return series;
   };
 
-  const keys = ["change_cases"];
-
-  let temp = serializeData(keys[0]);
-  console.log(temp);
+  let temp = serializeData(keys);
 
   return (
-    <LineChart data={temp} width={500} height={300}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <Tooltip />
-      <Legend />
-      <XAxis dataKey="date" />
-      <YAxis />
-      <Line type="monotone" dataKey="change_cases"></Line>
-      <Line type="monotone" dataKey="change_fatalities"></Line>
-    </LineChart>
-  );
-}
-
-function DataTable({ statistics, keyPairs, windowSize }) {
-  const createDataTitle = (key) => {
-    if (key.length === 0) {
-      return "";
-    }
-
-    const parts = key.split("_");
-    const title = parts[parts.length - 1];
-
-    return title.charAt(0).toUpperCase() + title.slice(1);
-  };
-
-  return (
-    <>
-      <table>
-        <tbody>
-          {keyPairs.map(([type, total, change]) => (
-            <tr key={type}>
-              <th>{createDataTitle(total)}</th>
-              <td>{statistics.getTotal(total)}</td>
-              <td>
-                {_annotateValueSign(
-                  statistics.getChange(change, windowSize).average
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+    <ResponsiveContainer width={400} height={400}>
+      <LineChart data={temp}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <Tooltip />
+        <Legend />
+        <XAxis dataKey="date" />
+        <YAxis />
+        {keys.map((key) => (
+          <Line key={key} dataKey={key}></Line>
+        ))}
+      </LineChart>
+    </ResponsiveContainer>
   );
 }
 
@@ -126,33 +91,28 @@ export default function Province({ provincialData }) {
 
   return (
     <>
-      <h2>{provincialData.name}</h2>
-
-      <Grid container spacing={3}>
-        <Grid item>
-          <p>
-            <em>{reportText}</em>
-          </p>
-          <Grid
-            container
-            direction="column"
-            justifyContent="flex-start"
-            alignItems="stretch"
-            spacing={3}
-          >
-            <Grid item>
-              <DataTable
+      <Grid container spacing={2}>
+        <Grid container item xs={12}>
+          <StatusBar report={currentReport} />
+        </Grid>
+        <Grid container item xs={12} spacing={2}>
+          <Grid item>
+            <Paper>
+              <DataGraph statistics={currentReport}></DataGraph>
+            </Paper>
+          </Grid>
+          <Grid item>
+            <Paper>
+              <DataGraph
                 statistics={currentReport}
-                keyPairs={["cases", "vaccinations", "fatalities"].map((key) => [
-                  key,
-                  `total_${key}`,
-                  `change_${key}`,
-                ])}
-                windowSize={dayWindow}
-                setDayWindow={setDayWindow}
-              ></DataTable>
-            </Grid>
-            <Grid item>
+                keys={["total_vaccinations", "change_vaccinations"]}
+              ></DataGraph>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Grid>
+
+      {/* 
               <ToggleButtonGroup
                 value={dayWindow}
                 onChange={handleDayWindowChange}
@@ -164,15 +124,7 @@ export default function Province({ provincialData }) {
                   </ToggleButton>
                 ))}
               </ToggleButtonGroup>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item>
-          <div height="300px" width="300px">
-            <DataGraph statistics={currentReport}></DataGraph>
-          </div>
-        </Grid>
-      </Grid>
+*/}
     </>
   );
 }
