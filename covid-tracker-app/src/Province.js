@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
+import { Grid } from "@material-ui/core";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 import * as api from "./api/api";
 import "./Province.css";
@@ -17,6 +25,41 @@ const _annotateValueSign = (value, toInteger = true) => {
     ? `${value >= 0 ? "+" : ""}${toInteger ? value.toFixed(0) : value}`
     : "N/A";
 };
+
+function DataGraph({ statistics }) {
+  // const
+
+  const createDataPoint = ({
+    date,
+    change_cases,
+    change_vaccinations,
+    change_fatalities,
+  }) => {
+    return { date, change_cases, change_vaccinations, change_fatalities };
+  };
+
+  const serializeData = (keysTODO = []) => {
+    let series = statistics.data.map((x) => createDataPoint(x));
+    return series;
+  };
+
+  const keys = ["change_cases"];
+
+  let temp = serializeData(keys[0]);
+  console.log(temp);
+
+  return (
+    <LineChart data={temp} width={500} height={300}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <Tooltip />
+      <Legend />
+      <XAxis dataKey="date" />
+      <YAxis />
+      <Line type="monotone" dataKey="change_cases"></Line>
+      <Line type="monotone" dataKey="change_fatalities"></Line>
+    </LineChart>
+  );
+}
 
 function DataTable({ statistics, keyPairs, windowSize }) {
   const createDataTitle = (key) => {
@@ -83,37 +126,54 @@ export default function Province({ provincialData }) {
   }, [provincialData.code]);
 
   return (
-    <Card className="card">
-      <CardContent>
-        <h2>{provincialData.name}</h2>
-        <p>
-          <em>{reportText}</em>
-        </p>
+    <>
+      <h2>{provincialData.name}</h2>
+      <p>
+        <em>{reportText}</em>
+      </p>
 
-        <DataTable
-          statistics={currentReport}
-          keyPairs={["cases", "vaccinations", "fatalities"].map((key) => [
-            key,
-            `total_${key}`,
-            `change_${key}`,
-          ])}
-          windowSize={dayWindow}
-          setDayWindow={setDayWindow}
-        ></DataTable>
-      </CardContent>
-      <CardActions>
-        <ToggleButtonGroup
-          value={dayWindow}
-          onChange={handleDayWindowChange}
-          exclusive
-        >
-          {[1, 7, 14].map((value) => (
-            <ToggleButton key={value} value={value}>
-              {value === dayWindow ? `${value} day window` : value}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </CardActions>
-    </Card>
+      <Grid container spacing={3}>
+        <Grid item>
+          <Grid
+            container
+            direction="column"
+            justifyContent="flex-start"
+            alignItems="stretch"
+            spacing={3}
+          >
+            <Grid item>
+              <DataTable
+                statistics={currentReport}
+                keyPairs={["cases", "vaccinations", "fatalities"].map((key) => [
+                  key,
+                  `total_${key}`,
+                  `change_${key}`,
+                ])}
+                windowSize={dayWindow}
+                setDayWindow={setDayWindow}
+              ></DataTable>
+            </Grid>
+            <Grid item>
+              <ToggleButtonGroup
+                value={dayWindow}
+                onChange={handleDayWindowChange}
+                exclusive
+              >
+                {[1, 7, 14].map((value) => (
+                  <ToggleButton key={value} value={value}>
+                    {value === dayWindow ? `${value} day window` : value}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item>
+          <div height="300px" width="300px">
+            <DataGraph statistics={currentReport}></DataGraph>
+          </div>
+        </Grid>
+      </Grid>
+    </>
   );
 }
