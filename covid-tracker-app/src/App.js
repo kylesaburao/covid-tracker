@@ -33,12 +33,21 @@ function App() {
     <div>
       <h1>Provincial Data</h1>
       <Grid container spacing={1}>
-        <Grid item xs={3}>
-          <ProvincialList
-            provinces={provincialData}
-            selectedProvince={selectedProvince}
-            setSelectedProvince={setSelectedProvince}
-          ></ProvincialList>
+        <Grid
+          container
+          item
+          xs={3}
+        >
+          <Grid item>
+            <ProvincialList
+              provinces={provincialData}
+              selectedProvince={selectedProvince}
+              setSelectedProvince={setSelectedProvince}
+            ></ProvincialList>
+          </Grid>
+          <Grid item direction="column">
+            <p>Data provided by {api.API_TRUE_URL}</p>
+          </Grid>
         </Grid>
         <Grid item xs={9}>
           {selectedProvince && selectedProvince in provincialMap && (

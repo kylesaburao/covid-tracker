@@ -14,19 +14,26 @@ function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function StatusBarItem({ dataKey, totalKey, changeKey, report }) {
+function StatusBarItem({
+  dataKey,
+  totalKey,
+  changeKey,
+  report,
+  isUpdated = false,
+}) {
+  const changeText = `Δ ${isUpdated
+    ? _annotateValueSign(report.getChange(changeKey, 1).average)
+    : "N/A"}`;
   return (
     <div className="status-item">
       <p className="status-title">{capitalize(dataKey)}</p>
       <p className="status-total">{report.getTotal(totalKey)}</p>
-      <p className="status-change">
-        {_annotateValueSign(report.getChange(changeKey, 1).average)}
-      </p>
+      <p className="status-change">{changeText}</p>
     </div>
   );
 }
 
-export default function StatusBar({ report }) {
+export default function StatusBar({ report, isUpdated = false }) {
   const keys = [
     "cases",
     "tests",
@@ -53,6 +60,7 @@ export default function StatusBar({ report }) {
               totalKey={totalKey}
               changeKey={changeKey}
               report={report}
+              isUpdated={isUpdated}
             />{" "}
           </Grid>
         ))}

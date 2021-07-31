@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Paper } from "@material-ui/core";
-// import ToggleButton from "@material-ui/lab/ToggleButton";
-// import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+import ToggleButton from "@material-ui/lab/ToggleButton";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import {
   LineChart,
   Line,
@@ -18,10 +18,16 @@ import "./Province.css";
 import Statistics from "./api/statistics";
 import StatusBar from "./province/StatusBar";
 
-const REPORTED_STATUS = "Reported";
-const DEFAULT_DAY_WINDOW = 1;
+const shajs = require("sha.js");
 
-function DataGraph({ statistics, keys = ["change_cases"] }) {
+const REPORTED_STATUS = "Reported";
+const DEFAULT_DAY_WINDOW = 7;
+
+function DataGraph({
+  statistics,
+  keys = ["change_cases"],
+  todayReported = false,
+}) {
   const createDataPoint = (day, keys) => {
     let data = keys.reduce((accum, key) => {
       if (keys.includes(key)) {
@@ -36,38 +42,55 @@ function DataGraph({ statistics, keys = ["change_cases"] }) {
   };
 
   const serializeData = (keys) => {
-    let series = statistics.data.map((x) => createDataPoint(x, keys));
+    const today = api.toAPICompatibleDate(api.daysFromNow(0));
+
+    let series = statistics.data
+      .filter((day) => {
+        const isToday = day.date === today;
+        return !isToday || (isToday && todayReported);
+      })
+      .map((x) => createDataPoint(x, keys));
+
     return series;
   };
 
   let temp = serializeData(keys);
 
+  const generateColor = (seed = "") => {
+    const hash = shajs("sha256").update(seed).digest("hex").slice(0, 6);
+    return `#${hash}`;
+  };
+
   return (
-    // <ResponsiveContainer width={400} height={400}>
-      <LineChart data={temp} width={400} height={400}>
+    <ResponsiveContainer width="95%" height={400}>
+      <LineChart data={temp} style={{ margin: "0.5em" }}>
         <CartesianGrid strokeDasharray="3 3" />
         <Tooltip />
         <Legend />
         <XAxis dataKey="date" />
         <YAxis />
         {keys.map((key) => (
-          <Line key={key} dataKey={key}></Line>
+          <Line
+            dot={false}
+            key={key}
+            dataKey={key}
+            stroke={generateColor(key)}
+          ></Line>
         ))}
       </LineChart>
-    // </ResponsiveContainer>
+    </ResponsiveContainer>
   );
 }
 
 export default function Province({ provincialData }) {
   // const updateTime = new Date(Date.parse(provincialData.updated_at));
-  // const dataReported = provincialData.data_status.includes(REPORTED_STATUS);
+  const dataReported = provincialData.data_status.includes(REPORTED_STATUS);
   // const reportText = dataReported
   //   ? `Updated today at ${updateTime.toLocaleTimeString()}`
   //   : "Current day update unavailable";
 
   const [currentReport, setCurrentReport] = useState(new Statistics([]));
   const [dayWindow, setDayWindow] = useState(DEFAULT_DAY_WINDOW);
-  const MAX_DAY_WINDOW = 14;
 
   const handleDayWindowChange = (event, value) => {
     if (value !== null && value !== undefined) {
@@ -76,7 +99,7 @@ export default function Province({ provincialData }) {
   };
 
   useEffect(() => {
-    const startDate = api.daysFromNow(-(MAX_DAY_WINDOW - 1));
+    const startDate = api.daysFromNow(-(dayWindow - 1));
 
     api
       .getProvincialReport(provincialData.code, api.daysFromNow(0), startDate)
@@ -87,44 +110,65 @@ export default function Province({ provincialData }) {
           setCurrentReport(statistics);
         }
       });
-  }, [provincialData.code]);
+  }, [provincialData.code, dayWindow]);
 
   return (
     <>
-      <Grid container spacing={2}>
+      <Grid
+        container
+        spacing={1}
+        justifyContent="space-around"
+        alignItems="flex-start"
+      >
         <Grid container item xs={12}>
-          <StatusBar report={currentReport} />
+          <StatusBar report={currentReport} isUpdated={dataReported} />
         </Grid>
-        <Grid container item xs={12} spacing={2}>
-          <Grid item>
-            <Paper>
-              <DataGraph statistics={currentReport}></DataGraph>
-            </Paper>
-          </Grid>
-          <Grid item>
+        <Grid container item xs={12} spacing={1}>
+          <Grid item xs={6}>
             <Paper>
               <DataGraph
                 statistics={currentReport}
-                keys={["total_vaccinations", "change_vaccinations"]}
+                keys={[
+                  "change_cases",
+                  "change_criticals",
+                  "change_hospitalizations",
+                  "change_fatalities",
+                ]}
+                todayReported={dataReported}
+              ></DataGraph>
+            </Paper>
+          </Grid>
+          <Grid item xs={6}>
+            <Paper>
+              <DataGraph
+                statistics={currentReport}
+                keys={[
+                  // "total_vaccinations",
+                  "total_cases",
+                  "total_criticals",
+                  "total_hospitalizations",
+                  "total_fatalities",
+                ]}
+                todayReported={dataReported}
               ></DataGraph>
             </Paper>
           </Grid>
         </Grid>
       </Grid>
 
-      {/* 
-              <ToggleButtonGroup
-                value={dayWindow}
-                onChange={handleDayWindowChange}
-                exclusive
-              >
-                {[1, 7, 14].map((value) => (
-                  <ToggleButton key={value} value={value}>
-                    {value === dayWindow ? `${value} day window` : value}
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-*/}
+      <ToggleButtonGroup
+        value={dayWindow}
+        size="small"
+        onChange={handleDayWindowChange}
+        orientation="vertical"
+        exclusive
+      >
+        {[7, 14, 31, 365].map((value) => (
+          <ToggleButton key={value} value={value}>
+            {value === dayWindow ? `${value} days` : value}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
     </>
   );
 }

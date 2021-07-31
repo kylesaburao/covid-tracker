@@ -11,6 +11,7 @@ const SUMMARY_CACHE_KEY = "summary";
   https://api.covid19tracker.ca/docs/1.0/overview
 */
 
+export const API_TRUE_URL = "api.covid19tracker.ca";
 const API_URL = "http://localhost:81/proxy";
 const API_LOCATIONS = {
   summary: "/summary",
@@ -46,8 +47,10 @@ export function currentTime() {
   return daysFromNow().getTime();
 }
 
-function _toAPICompatibleDate(date = daysFromNow(0)) {
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+export function toAPICompatibleDate(date = daysFromNow(0)) {
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const dateValue = date.getDate().toString().padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${dateValue}`;
 }
 
 function _get(location, onSuccess, onFailure, params = {}) {
@@ -125,9 +128,9 @@ export function getProvincialReport(
   let params = {};
 
   if (startDate !== null) {
-    params["after"] = _toAPICompatibleDate(startDate);
+    params["after"] = toAPICompatibleDate(startDate);
   } else if (date !== null) {
-    params["date"] = _toAPICompatibleDate(date);
+    params["date"] = toAPICompatibleDate(date);
   } else {
     throw new Error("Invalid arguments");
   }

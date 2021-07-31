@@ -16,6 +16,7 @@
     "react-scripts": "4.0.3",
     "recharts": "^2.0.10",
     "redux": "^4.1.0",
+    "sha.js": "^2.4.11",
     "timed-cache": "^1.1.5",
     "web-vitals": "^1.1.2"
   },
