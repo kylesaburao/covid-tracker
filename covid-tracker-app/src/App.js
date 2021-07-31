@@ -14,7 +14,6 @@ function App() {
   const [apiBusy, setApiBusy] = useState(false);
 
   api.registerBusySignaller((state) => {
-    console.log("signalling", state);
     setApiBusy(state);
   });
 
