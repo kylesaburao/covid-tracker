@@ -19,7 +19,7 @@ Uses the Canadian data API provided from `https://api.covid19tracker.ca/docs/1.0
 - All code changes on the host will automatically reflect inside the container.
 - npm package changes require a rerun of docker compose.
 
-#### Refresh node_modules after dependency update
+#### Refresh node_modules after dependency update for an active deployement
 
 `docker compose exec app npm install`
 
