@@ -154,21 +154,23 @@ export default function Province({ provincialData }) {
             </Paper>
           </Grid>
         </Grid>
+        <Grid container item xs={12}>
+          <Grid item xs={1}>
+            <ToggleButtonGroup
+              value={dayWindow}
+              size="small"
+              onChange={handleDayWindowChange}
+              exclusive
+            >
+              {[7, 14, 31, 365].map((value) => (
+                <ToggleButton key={value} value={value}>
+                  {value === dayWindow ? `${value} days` : value}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Grid>
+        </Grid>
       </Grid>
-
-      <ToggleButtonGroup
-        value={dayWindow}
-        size="small"
-        onChange={handleDayWindowChange}
-        orientation="vertical"
-        exclusive
-      >
-        {[7, 14, 31, 365].map((value) => (
-          <ToggleButton key={value} value={value}>
-            {value === dayWindow ? `${value} days` : value}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
     </>
   );
 }

@@ -36,6 +36,7 @@ function App() {
         <Grid
           container
           item
+          direction="column"
           xs={3}
         >
           <Grid item>
@@ -45,7 +46,7 @@ function App() {
               setSelectedProvince={setSelectedProvince}
             ></ProvincialList>
           </Grid>
-          <Grid item direction="column">
+          <Grid item>
             <p>Data provided by {api.API_TRUE_URL}</p>
           </Grid>
         </Grid>
