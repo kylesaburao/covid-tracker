@@ -4,6 +4,7 @@ import Cache from "timed-cache";
 
 const dataCache = new Cache({ defaultTtl: 1000 * 60 });
 const PROVINCIAL_CACHE_KEY = "provincial";
+const PROVINCIAL_REPORT_CACHE_KEY = "provincial_report";
 const SUMMARY_CACHE_KEY = "summary";
 
 /*
@@ -91,10 +92,18 @@ export function getSummary() {
 
 export function getProvinces(geographicOnly = true) {
   return new Promise((resolve, reject) => {
+    const cacheKey = createCacheKey([PROVINCIAL_CACHE_KEY, geographicOnly]);
+    const cachedData = dataCache.get(cacheKey);
+    if (cachedData !== undefined) {
+      resolve(cachedData);
+      return;
+    }
+
     _get(
       API_LOCATIONS.provinces,
       (result) => {
         resolve(result.data);
+        dataCache.put(cacheKey, result.data);
       },
       reject,
       { geo_only: geographicOnly }
@@ -124,7 +133,11 @@ export function getProvincialReport(
   }
 
   params = { ...params, fill_dates: false };
-  const cacheKey = createCacheKey([PROVINCIAL_CACHE_KEY, provinceCode, params]);
+  const cacheKey = createCacheKey([
+    PROVINCIAL_REPORT_CACHE_KEY,
+    provinceCode,
+    params,
+  ]);
 
   return new Promise((resolve, reject) => {
     const cacheItem = dataCache.get(cacheKey);
