@@ -5,7 +5,7 @@ services:
       context: ./covid-tracker-app
     volumes:
       - "./covid-tracker-app:/app"
-      - "/app/node_modules"
+      - /app/node_modules
     ports:
       - 80:3000
     depends_on:
