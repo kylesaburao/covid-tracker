@@ -1,5 +1,10 @@
 import axios from "axios";
 import { setupCache } from "axios-cache-adapter";
+import Cache from "timed-cache";
+
+const dataCache = new Cache({ defaultTtl: 1000 * 60 });
+const PROVINCIAL_CACHE_KEY = "provincial";
+const SUMMARY_CACHE_KEY = "summary";
 
 /*
   https://api.covid19tracker.ca/docs/1.0/overview
@@ -17,6 +22,10 @@ const API_LOCATIONS = {
 
 const axiosCache = setupCache({ maxAge: 1000 * 60, exclude: { query: false } });
 const axiosAPI = axios.create({ adapter: axiosCache.adapter });
+
+function createCacheKey(items) {
+  return items.map((item) => JSON.stringify(item)).join(".");
+}
 
 function _constructURL(location) {
   return `${API_URL}${location}`;
@@ -115,12 +124,21 @@ export function getProvincialReport(
   }
 
   params = { ...params, fill_dates: false };
+  const cacheKey = createCacheKey([PROVINCIAL_CACHE_KEY, provinceCode, params]);
 
   return new Promise((resolve, reject) => {
+    const cacheItem = dataCache.get(cacheKey);
+    if (cacheItem !== undefined) {
+      resolve(cacheItem);
+      return;
+    }
+
     _get(
       `${API_LOCATIONS.reports}/province/${provinceCode}`,
       (result) => {
         resolve(result.data);
+
+        dataCache.put(cacheKey, result.data);
       },
       reject,
       params

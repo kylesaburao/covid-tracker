@@ -6,7 +6,6 @@ export default function ProvincialList({
   setSelectedProvince,
   selectedProvince,
 }) {
-  console.log(provinces);
   const isReported = (province) => province.data_status === "Reported";
 
   return (

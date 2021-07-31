@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Paper } from "@material-ui/core";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+// import ToggleButton from "@material-ui/lab/ToggleButton";
+// import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import {
   LineChart,
   Line,
@@ -43,8 +43,8 @@ function DataGraph({ statistics, keys = ["change_cases"] }) {
   let temp = serializeData(keys);
 
   return (
-    <ResponsiveContainer width={400} height={400}>
-      <LineChart data={temp}>
+    // <ResponsiveContainer width={400} height={400}>
+      <LineChart data={temp} width={400} height={400}>
         <CartesianGrid strokeDasharray="3 3" />
         <Tooltip />
         <Legend />
@@ -54,16 +54,16 @@ function DataGraph({ statistics, keys = ["change_cases"] }) {
           <Line key={key} dataKey={key}></Line>
         ))}
       </LineChart>
-    </ResponsiveContainer>
+    // </ResponsiveContainer>
   );
 }
 
 export default function Province({ provincialData }) {
-  const updateTime = new Date(Date.parse(provincialData.updated_at));
-  const dataReported = provincialData.data_status.includes(REPORTED_STATUS);
-  const reportText = dataReported
-    ? `Updated today at ${updateTime.toLocaleTimeString()}`
-    : "Current day update unavailable";
+  // const updateTime = new Date(Date.parse(provincialData.updated_at));
+  // const dataReported = provincialData.data_status.includes(REPORTED_STATUS);
+  // const reportText = dataReported
+  //   ? `Updated today at ${updateTime.toLocaleTimeString()}`
+  //   : "Current day update unavailable";
 
   const [currentReport, setCurrentReport] = useState(new Statistics([]));
   const [dayWindow, setDayWindow] = useState(DEFAULT_DAY_WINDOW);
