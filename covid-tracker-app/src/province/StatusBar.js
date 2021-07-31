@@ -20,29 +20,43 @@ function StatusBarItem({
   changeKey,
   report,
   isUpdated = false,
+  isIncreaseBad = true,
 }) {
-  const changeText = `Δ ${isUpdated
-    ? _annotateValueSign(report.getChange(changeKey, 1).average)
-    : "N/A"}`;
+  const delta = report.getChange(changeKey, 1).average;
+  const changeText = `Δ ${isUpdated ? _annotateValueSign(delta) : "N/A"}`;
+
+  const changeColor = isUpdated
+    ? isIncreaseBad && delta > 0
+      ? "red"
+      : "green"
+    : "black";
+
   return (
     <div className="status-item">
       <p className="status-title">{capitalize(dataKey)}</p>
       <p className="status-total">{report.getTotal(totalKey)}</p>
-      <p className="status-change">{changeText}</p>
+      <p className="status-change">
+        <span style={{ color: changeColor }}>{changeText}</span>
+      </p>
     </div>
   );
 }
 
 export default function StatusBar({ report, isUpdated = false }) {
   const keys = [
-    "cases",
-    "tests",
-    "vaccinations",
-    "hospitalizations",
-    "criticals",
-    "recoveries",
-    "fatalities",
-  ].map((x) => [x, `total_${x}`, `change_${x}`]);
+    ["cases", true],
+    ["tests", false],
+    ["vaccinations", false],
+    ["hospitalizations", true],
+    ["criticals", true],
+    ["recoveries", false],
+    ["fatalities", true],
+  ].map(([x, isIncreaseBad]) => [
+    x,
+    `total_${x}`,
+    `change_${x}`,
+    isIncreaseBad,
+  ]);
 
   return (
     <Paper style={{ width: "100%" }}>
@@ -53,7 +67,7 @@ export default function StatusBar({ report, isUpdated = false }) {
         direction="row"
         alignItems="stretch"
       >
-        {keys.map(([key, totalKey, changeKey], index) => (
+        {keys.map(([key, totalKey, changeKey, isIncreaseBad], index) => (
           <Grid item key={key}>
             <StatusBarItem
               dataKey={key}
@@ -61,6 +75,7 @@ export default function StatusBar({ report, isUpdated = false }) {
               changeKey={changeKey}
               report={report}
               isUpdated={isUpdated}
+              isIncreaseBad={isIncreaseBad}
             />{" "}
           </Grid>
         ))}
