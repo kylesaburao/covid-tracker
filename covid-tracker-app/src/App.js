@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid, CircularProgress } from "@material-ui/core";
 
 import * as api from "./api/api";
 
@@ -11,6 +11,12 @@ function App() {
   const [provincialData, setProvincialData] = useState([]);
   const [provincialMap, setProvincialMap] = useState({});
   const [selectedProvince, setSelectedProvince] = useState("");
+  const [apiBusy, setApiBusy] = useState(false);
+
+  api.registerBusySignaller((state) => {
+    console.log("signalling", state);
+    setApiBusy(state);
+  });
 
   useEffect(() => {
     api.getProvinces().then((data) => {
@@ -31,14 +37,24 @@ function App() {
 
   return (
     <div>
-      <h1>Provincial Data</h1>
+      <Grid
+        container
+        spacing={4}
+        direction="row"
+        justifyContent="flex-start"
+        alignItems="center"
+      >
+        <Grid item>
+          <h1>Provincial Data</h1>
+        </Grid>
+        {apiBusy && (
+          <Grid item>
+            <CircularProgress />
+          </Grid>
+        )}
+      </Grid>
       <Grid container spacing={1}>
-        <Grid
-          container
-          item
-          direction="column"
-          xs={3}
-        >
+        <Grid container item direction="column" xs={3}>
           <Grid item>
             <ProvincialList
               provinces={provincialData}

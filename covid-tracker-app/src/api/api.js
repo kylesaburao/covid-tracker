@@ -53,17 +53,33 @@ export function toAPICompatibleDate(date = daysFromNow(0)) {
   return `${date.getFullYear()}-${month}-${dateValue}`;
 }
 
+let _signaller = null;
+
+export function registerBusySignaller(signaller) {
+  _signaller = signaller;
+}
+
+function _signalBusy(isBusy) {
+  if (_signaller) {
+    _signaller(isBusy);
+  }
+}
+
 function _get(location, onSuccess, onFailure, params = {}) {
   console.log("GET", currentTime(), location, params);
+  _signalBusy(true);
+
   axiosAPI({ url: _constructURL(location), method: "get", params: params })
     .then(async (result) => {
       onSuccess(result);
+      _signalBusy(false);
     })
     .catch((error) => {
       if (onFailure) {
         onFailure(error);
       }
       console.log(`API ERROR: ${error}`);
+      _signalBusy(false);
     });
 }
 
