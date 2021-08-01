@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Paper } from "@material-ui/core";
+import { Grid, Card, CardContent } from "@material-ui/core";
 
 import "./StatusBar.css";
 
@@ -59,27 +59,44 @@ export default function StatusBar({ report, isUpdated = false }) {
   ]);
 
   return (
-    <Paper style={{ width: "100%" }}>
-      <Grid
-        spacing={2}
-        container
-        justifyContent="space-between"
-        direction="row"
-        alignItems="stretch"
-      >
-        {keys.map(([key, totalKey, changeKey, isIncreaseBad], index) => (
-          <Grid item key={key}>
-            <StatusBarItem
-              dataKey={key}
-              totalKey={totalKey}
-              changeKey={changeKey}
-              report={report}
-              isUpdated={isUpdated}
-              isIncreaseBad={isIncreaseBad}
-            />{" "}
-          </Grid>
-        ))}
-      </Grid>
-    </Paper>
+    <Card style={{ width: "100%" }}>
+      <CardContent style={{ padding: ".5em" }}>
+        <Grid
+          spacing={2}
+          container
+          justifyContent="space-between"
+          direction="row"
+          alignItems="stretch"
+        >
+          {keys.map(([key, totalKey, changeKey, isIncreaseBad], index) => (
+            <Grid item key={key}>
+              <StatusBarItem
+                dataKey={key}
+                totalKey={totalKey}
+                changeKey={changeKey}
+                report={report}
+                isUpdated={isUpdated}
+                isIncreaseBad={isIncreaseBad}
+              />{" "}
+            </Grid>
+          ))}
+          {!isUpdated && (
+            <Grid
+              container
+              item
+              xs={12}
+              style={{
+                backgroundColor: "#263238",
+                color: "white",
+              }}
+            >
+              <span style={{ fontStyle: "italic", fontSize: "smaller" }}>
+                Daily update unavailable
+              </span>
+            </Grid>
+          )}
+        </Grid>
+      </CardContent>
+    </Card>
   );
 }

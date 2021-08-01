@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Grid, Paper } from "@material-ui/core";
+import { Card, Grid } from "@material-ui/core";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+import React, { useEffect, useState } from "react";
 import {
-  LineChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
 } from "recharts";
-
 import * as api from "./api/api";
-import "./Province.css";
 import Statistics from "./api/statistics";
+import "./Province.css";
 import StatusBar from "./province/StatusBar";
 
 const shajs = require("sha.js");
@@ -116,16 +115,16 @@ export default function Province({ provincialData }) {
     <>
       <Grid
         container
-        spacing={1}
+        spacing={2}
         justifyContent="space-around"
         alignItems="flex-start"
       >
         <Grid container item xs={12}>
           <StatusBar report={currentReport} isUpdated={dataReported} />
         </Grid>
-        <Grid container item xs={12} spacing={1}>
+        <Grid container item xs={12} spacing={2}>
           <Grid item xs={6}>
-            <Paper>
+            <Card>
               <DataGraph
                 statistics={currentReport}
                 keys={[
@@ -136,10 +135,10 @@ export default function Province({ provincialData }) {
                 ]}
                 todayReported={dataReported}
               ></DataGraph>
-            </Paper>
+            </Card>
           </Grid>
           <Grid item xs={6}>
-            <Paper>
+            <Card>
               <DataGraph
                 statistics={currentReport}
                 keys={[
@@ -151,7 +150,7 @@ export default function Province({ provincialData }) {
                 ]}
                 todayReported={dataReported}
               ></DataGraph>
-            </Paper>
+            </Card>
           </Grid>
         </Grid>
         <Grid container item xs={12}>

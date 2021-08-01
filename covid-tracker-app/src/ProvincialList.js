@@ -1,5 +1,5 @@
+import { Card, MenuItem, MenuList } from "@material-ui/core";
 import React from "react";
-import { MenuItem, MenuList } from "@material-ui/core";
 
 export default function ProvincialList({
   provinces,
@@ -9,31 +9,33 @@ export default function ProvincialList({
   const isReported = (province) => province.data_status === "Reported";
 
   return (
-    <MenuList>
-      {provinces.map((province) => (
-        <MenuItem
-          key={province.code}
-          onClick={() => {
-            setSelectedProvince(province.code);
-          }}
-          selected={province.code === selectedProvince}
-        >
-          <span>
-            {province.name}
-            {!isReported(province) && (
-              <span
-                style={{
-                  fontSize: "smaller",
-                  fontStyle: "italic",
-                }}
-              >
-                {" "}
-                Unreported
-              </span>
-            )}
-          </span>
-        </MenuItem>
-      ))}
-    </MenuList>
+    <Card>
+      <MenuList style={{ padding: 0, backgroundColor: "#eceff1" }}>
+        {provinces.map((province) => (
+          <MenuItem
+            key={province.code}
+            onClick={() => {
+              setSelectedProvince(province.code);
+            }}
+            selected={province.code === selectedProvince}
+          >
+            <span style={{ fontWeight: "bold" }}>
+              {province.name}
+              {!isReported(province) && (
+                <span
+                  style={{
+                    fontSize: "smaller",
+                    fontStyle: "italic",
+                  }}
+                >
+                  {" "}
+                  *
+                </span>
+              )}
+            </span>
+          </MenuItem>
+        ))}
+      </MenuList>
+    </Card>
   );
 }

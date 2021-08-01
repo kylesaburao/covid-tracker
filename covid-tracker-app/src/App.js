@@ -1,9 +1,7 @@
-import "./App.css";
-import React, { useState, useEffect } from "react";
-import { Grid, CircularProgress } from "@material-ui/core";
-
+import { CircularProgress, Grid } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import * as api from "./api/api";
-
+import "./App.css";
 import Province from "./Province";
 import ProvincialList from "./ProvincialList";
 
@@ -36,23 +34,25 @@ function App() {
 
   return (
     <div>
-      <Grid
-        container
-        spacing={4}
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="center"
-      >
-        <Grid item>
-          <h1>Provincial Data</h1>
-        </Grid>
-        {apiBusy && (
+      <Grid container justifyContent="space-around" spacing={3}>
+        <Grid
+          container
+          item
+          xs={12}
+          spacing={4}
+          direction="row"
+          justifyContent="flex-start"
+          alignItems="center"
+        >
           <Grid item>
-            <CircularProgress />
+            <h1>Provincial Data</h1>
           </Grid>
-        )}
-      </Grid>
-      <Grid container spacing={1}>
+          {apiBusy && (
+            <Grid item>
+              <CircularProgress />
+            </Grid>
+          )}
+        </Grid>
         <Grid container item direction="column" xs={3}>
           <Grid item>
             <ProvincialList
@@ -62,10 +62,14 @@ function App() {
             ></ProvincialList>
           </Grid>
           <Grid item>
-            <p>Data provided by {api.API_TRUE_URL}</p>
+            <p>
+              <a href="https://api.covid19tracker.ca/docs/1.0/overview">
+                Data provided by {api.API_TRUE_URL}
+              </a>
+            </p>
           </Grid>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs>
           {selectedProvince && selectedProvince in provincialMap && (
             <Province
               provincialData={provincialMap[selectedProvince]}
