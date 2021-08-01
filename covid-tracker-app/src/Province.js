@@ -67,7 +67,7 @@ function DataGraph({
         <Tooltip />
         <Legend />
         <XAxis dataKey="date" />
-        <YAxis />
+        <YAxis domain={[0, "auto"]} allowDataOverflow={true} />
         {keys.map((key) => (
           <Line
             dot={false}
