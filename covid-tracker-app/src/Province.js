@@ -1,4 +1,4 @@
-import { Card, Grid, Paper } from "@material-ui/core";
+import { Card, Grid } from "@material-ui/core";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import React, { useEffect, useState } from "react";
@@ -112,76 +112,74 @@ export default function Province({ provincialData }) {
   }, [provincialData.code, dayWindow]);
 
   return (
-    <Paper>
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        justifyContent="space-around"
-        alignItems="flex-start"
-        style={{padding: "1em", marginLeft: "0.25em"}}
-      >
-        <Grid container item>
-          <StatusBar
-            report={currentReport}
-            isUpdated={dataReported}
-            updateTime={updateTime}
-          />
+    <Grid
+      container
+      spacing={0}
+      direction="column"
+      justifyContent="space-around"
+      alignItems="flex-start"
+      style={{ padding: "1em", marginLeft: "0.25em" }}
+    >
+      <Grid container item>
+        <StatusBar
+          report={currentReport}
+          isUpdated={dataReported}
+          updateTime={updateTime}
+        />
+      </Grid>
+      <Grid container item spacing={0}>
+        <Grid item xs={6}>
+          <Card>
+            <DataGraph
+              statistics={currentReport}
+              keys={[
+                "change_cases",
+                "change_criticals",
+                "change_hospitalizations",
+                "change_fatalities",
+              ]}
+              todayReported={dataReported}
+            ></DataGraph>
+          </Card>
         </Grid>
-        <Grid container item spacing={0}>
-          <Grid item xs={6}>
-            <Card>
-              <DataGraph
-                statistics={currentReport}
-                keys={[
-                  "change_cases",
-                  "change_criticals",
-                  "change_hospitalizations",
-                  "change_fatalities",
-                ]}
-                todayReported={dataReported}
-              ></DataGraph>
-            </Card>
-          </Grid>
-          <Grid item xs={6}>
-            <Card>
-              <DataGraph
-                statistics={currentReport}
-                keys={[
-                  // "total_vaccinations",
-                  "total_cases",
-                  "total_criticals",
-                  "total_hospitalizations",
-                  "total_fatalities",
-                ]}
-                todayReported={dataReported}
-              ></DataGraph>
-            </Card>
-          </Grid>
-        </Grid>
-        <Grid container item>
-          <Grid item xs={1}>
-            <ToggleButtonGroup
-              value={dayWindow}
-              size="small"
-              onChange={handleDayWindowChange}
-              exclusive
-            >
-              {[7, 14, 31, 365].map((value) => (
-                <ToggleButton key={value} value={value}>
-                  {value === dayWindow ? `${value} days` : value}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </Grid>
-        </Grid>
-        <Grid container item>
-          <Grid item xs={6}>
-        <h3>Vaccinations</h3>
-            <VaccinationData provincialData={provincialData} />
-          </Grid>
+        <Grid item xs={6}>
+          <Card>
+            <DataGraph
+              statistics={currentReport}
+              keys={[
+                // "total_vaccinations",
+                "total_cases",
+                "total_criticals",
+                "total_hospitalizations",
+                "total_fatalities",
+              ]}
+              todayReported={dataReported}
+            ></DataGraph>
+          </Card>
         </Grid>
       </Grid>
-    </Paper>
+      <Grid container item>
+        <Grid item xs={1}>
+          <ToggleButtonGroup
+            value={dayWindow}
+            size="small"
+            onChange={handleDayWindowChange}
+            exclusive
+          >
+            {[7, 14, 31, 365].map((value) => (
+              <ToggleButton key={value} value={value}>
+                {value === dayWindow ? `${value} days` : value}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        </Grid>
+      </Grid>
+      <Grid container item>
+        <Grid item xs={6}>
+          <h3>Vaccinations</h3>
+          <VaccinationData provincialData={provincialData} />
+        </Grid>
+      </Grid>
+    </Grid>
   );
 }

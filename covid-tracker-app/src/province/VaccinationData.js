@@ -58,7 +58,7 @@ export default function VaccinationData({ provincialData }) {
           <Tooltip />
           <Legend />
           <Bar dataKey="partial" stackId="a" fill="#c2e699" />
-          <Bar dataKey="full" stackId="a" fill="#78c679" />
+          <Bar dataKey="full" stackId="b" fill="#78c679" />
         </BarChart>
       </ResponsiveContainer>
     </Card>
