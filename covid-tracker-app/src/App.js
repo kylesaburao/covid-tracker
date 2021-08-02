@@ -5,6 +5,10 @@ import "./App.css";
 import Province from "./Province";
 import ProvincialList from "./ProvincialList";
 
+function LoadingSpinner({ isLoading }) {
+  return isLoading && <CircularProgress />;
+}
+
 function App() {
   const [provincialData, setProvincialData] = useState([]);
   const [provincialMap, setProvincialMap] = useState({});
@@ -33,47 +37,55 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <Grid container direction="row" justifyContent="space-around" spacing={0}>
-        <Grid
-          container
-          item
-          xs={12}
-          spacing={3}
-          direction="row"
-          justifyContent="flex-start"
-          alignItems="center"
-          style={{
-            backgroundColor: "#263238",
-            color: "white",
-          }}
-        > 
-          <Grid item>
-            <h1>Provincial Data</h1>
-          </Grid>
-          {apiBusy && (
-            <Grid item>
-              <CircularProgress />
-            </Grid>
-          )}
+    <Grid
+      container
+      style={{ margin: 0, padding: 0, height: "100vh" }}
+      spacing={0}
+    >
+      {/* Header */}
+      <Grid
+        container
+        item
+        xs={12}
+        spacing={0}
+        direction="row"
+        justifyContent="flex-start"
+        alignItems="center"
+        style={{
+          backgroundColor: "#263238",
+          color: "white",
+        }}
+        id="header"
+      >
+        <Grid item>
+          <h1>Provincial Data</h1>
         </Grid>
-        <Grid container item direction="column" xs={3}>
-          <Grid item>
-            <ProvincialList
-              provinces={provincialData}
-              selectedProvince={selectedProvince}
-              setSelectedProvince={setSelectedProvince}
-            ></ProvincialList>
-          </Grid>
-          <Grid item>
-            <p>
-              <a href="https://api.covid19tracker.ca/docs/1.0/overview">
-                Data provided by {api.API_TRUE_URL}
-              </a>
-            </p>
-          </Grid>
+        <Grid item>
+          <LoadingSpinner isLoading={apiBusy} />
         </Grid>
-        <Grid item xs>
+      </Grid>
+
+      {/* Province list */}
+      <Grid container item direction="column" xs={3}>
+        <Grid item>
+          <ProvincialList
+            provinces={provincialData}
+            selectedProvince={selectedProvince}
+            setSelectedProvince={setSelectedProvince}
+          ></ProvincialList>
+        </Grid>
+        <Grid item>
+          <p>
+            <a href="https:api.covid19tracker.ca/docs/1.0/overview">
+              Data provided by {api.API_TRUE_URL}
+            </a>
+          </p>
+        </Grid>
+      </Grid>
+
+      {/* Province data */}
+      <Grid container item xs style={{ maxHeight: "90vh", overflow: "auto" }}>
+        <Grid item>
           {selectedProvince && selectedProvince in provincialMap && (
             <Province
               provincialData={provincialMap[selectedProvince]}
@@ -81,7 +93,7 @@ function App() {
           )}
         </Grid>
       </Grid>
-    </div>
+    </Grid>
   );
 }
 

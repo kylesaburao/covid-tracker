@@ -20,6 +20,7 @@ const API_LOCATIONS = {
   fatalities: "/fatalities",
   provinces: "/provinces",
   regions: "/regions",
+  vaccine_groups: "/vaccines/age-groups",
 };
 
 const axiosCache = setupCache({ maxAge: 1000 * 60, exclude: { query: false } });
@@ -174,6 +175,18 @@ export function getProvincialReport(
       },
       reject,
       params
+    );
+  });
+}
+
+export function getProvincialVaccinations(provincialCode) {
+  return new Promise((resolve, reject) => {
+    _get(
+      `${API_LOCATIONS.vaccine_groups}/province/${provincialCode}`,
+      (result) => {
+        resolve(result.data);
+      },
+      reject
     );
   });
 }

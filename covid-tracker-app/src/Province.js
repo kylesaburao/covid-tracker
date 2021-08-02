@@ -1,4 +1,4 @@
-import { Card, Grid } from "@material-ui/core";
+import { Card, Grid, Paper } from "@material-ui/core";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import React, { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import * as api from "./api/api";
 import Statistics from "./api/statistics";
 import "./Province.css";
 import StatusBar from "./province/StatusBar";
+import VaccinationData from "./province/VaccinationData";
 
 const shajs = require("sha.js");
 
@@ -111,13 +112,14 @@ export default function Province({ provincialData }) {
   }, [provincialData.code, dayWindow]);
 
   return (
-    <>
+    <Paper>
       <Grid
         container
         spacing={0}
         direction="column"
         justifyContent="space-around"
         alignItems="flex-start"
+        style={{padding: "1em", marginLeft: "0.25em"}}
       >
         <Grid container item>
           <StatusBar
@@ -173,7 +175,13 @@ export default function Province({ provincialData }) {
             </ToggleButtonGroup>
           </Grid>
         </Grid>
+        <Grid container item>
+          <Grid item xs={6}>
+        <h3>Vaccinations</h3>
+            <VaccinationData provincialData={provincialData} />
+          </Grid>
+        </Grid>
       </Grid>
-    </>
+    </Paper>
   );
 }
