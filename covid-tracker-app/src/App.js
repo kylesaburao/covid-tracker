@@ -34,16 +34,20 @@ function App() {
 
   return (
     <div>
-      <Grid container justifyContent="space-around" spacing={3}>
+      <Grid container direction="row" justifyContent="space-around" spacing={0}>
         <Grid
           container
           item
           xs={12}
-          spacing={4}
+          spacing={3}
           direction="row"
           justifyContent="flex-start"
           alignItems="center"
-        >
+          style={{
+            backgroundColor: "#263238",
+            color: "white",
+          }}
+        > 
           <Grid item>
             <h1>Provincial Data</h1>
           </Grid>

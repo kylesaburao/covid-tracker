@@ -42,7 +42,7 @@ function StatusBarItem({
   );
 }
 
-export default function StatusBar({ report, isUpdated = false }) {
+export default function StatusBar({ report, updateTime, isUpdated = false }) {
   const keys = [
     ["cases", true],
     ["tests", false],
@@ -57,6 +57,11 @@ export default function StatusBar({ report, isUpdated = false }) {
     `change_${x}`,
     isIncreaseBad,
   ]);
+
+  const reportText =
+    isUpdated && updateTime
+      ? `Updated today @ ${updateTime.toLocaleTimeString()}`
+      : "Daily update unavailable";
 
   return (
     <Card style={{ width: "100%" }}>
@@ -80,21 +85,19 @@ export default function StatusBar({ report, isUpdated = false }) {
               />{" "}
             </Grid>
           ))}
-          {!isUpdated && (
-            <Grid
-              container
-              item
-              xs={12}
-              style={{
-                backgroundColor: "#263238",
-                color: "white",
-              }}
-            >
-              <span style={{ fontStyle: "italic", fontSize: "smaller" }}>
-                Daily update unavailable
-              </span>
-            </Grid>
-          )}
+          <Grid
+            container
+            item
+            xs={12}
+            style={{
+              backgroundColor: "#263238",
+              color: "white",
+            }}
+          >
+            <span style={{ fontStyle: "italic", fontSize: "smaller" }}>
+              {reportText}
+            </span>
+          </Grid>
         </Grid>
       </CardContent>
     </Card>

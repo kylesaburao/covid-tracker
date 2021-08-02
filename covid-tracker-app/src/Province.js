@@ -45,6 +45,7 @@ function DataGraph({
 
     let series = statistics.data
       .filter((day) => {
+        // Skip today's data if it was unreported
         const isToday = day.date === today;
         return !isToday || (isToday && todayReported);
       })
@@ -56,6 +57,7 @@ function DataGraph({
   let temp = serializeData(keys);
 
   const generateColor = (seed = "") => {
+    // Create a deterministic color based on the name of the key
     const hash = shajs("sha256").update(seed).digest("hex").slice(0, 6);
     return `#${hash}`;
   };
@@ -82,11 +84,8 @@ function DataGraph({
 }
 
 export default function Province({ provincialData }) {
-  // const updateTime = new Date(Date.parse(provincialData.updated_at));
+  const updateTime = new Date(Date.parse(provincialData.updated_at));
   const dataReported = provincialData.data_status.includes(REPORTED_STATUS);
-  // const reportText = dataReported
-  //   ? `Updated today at ${updateTime.toLocaleTimeString()}`
-  //   : "Current day update unavailable";
 
   const [currentReport, setCurrentReport] = useState(new Statistics([]));
   const [dayWindow, setDayWindow] = useState(DEFAULT_DAY_WINDOW);
@@ -115,14 +114,19 @@ export default function Province({ provincialData }) {
     <>
       <Grid
         container
-        spacing={2}
+        spacing={0}
+        direction="column"
         justifyContent="space-around"
         alignItems="flex-start"
       >
-        <Grid container item xs={12}>
-          <StatusBar report={currentReport} isUpdated={dataReported} />
+        <Grid container item>
+          <StatusBar
+            report={currentReport}
+            isUpdated={dataReported}
+            updateTime={updateTime}
+          />
         </Grid>
-        <Grid container item xs={12} spacing={2}>
+        <Grid container item spacing={0}>
           <Grid item xs={6}>
             <Card>
               <DataGraph
@@ -153,7 +157,7 @@ export default function Province({ provincialData }) {
             </Card>
           </Grid>
         </Grid>
-        <Grid container item xs={12}>
+        <Grid container item>
           <Grid item xs={1}>
             <ToggleButtonGroup
               value={dayWindow}
