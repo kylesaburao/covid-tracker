@@ -1,10 +1,11 @@
 import axios from "axios";
 import { setupCache } from "axios-cache-adapter";
-import Cache from "timed-cache";
 
-const dataCache = new Cache({ defaultTtl: 1000 * 60 });
+import * as TimedLocalStorage from "./TimedLocalStorage";
+
 const PROVINCIAL_CACHE_KEY = "provincial";
 const PROVINCIAL_REPORT_CACHE_KEY = "provincial_report";
+const PROVINCIAL_VACCINATIONS_CACHE_KEY = "provincial_vaccinations";
 const SUMMARY_CACHE_KEY = "summary";
 
 /*
@@ -68,6 +69,7 @@ function _signalBusy(isBusy) {
 
 function _get(location, onSuccess, onFailure, params = {}) {
   _signalBusy(true);
+  console.log("BUSY", location, params);
 
   axiosAPI({ url: _constructURL(location), method: "get", params: params })
     .then(async (result) => {
@@ -97,7 +99,7 @@ export function getSummary() {
 
   return new Promise((resolve, reject) => {
     const cacheKey = createCacheKey([SUMMARY_CACHE_KEY]);
-    const cachedData = dataCache.get(cacheKey);
+    const cachedData = TimedLocalStorage.get(cacheKey);
     if (cachedData !== undefined) {
       resolve(cachedData);
       return;
@@ -112,7 +114,7 @@ export function getSummary() {
       });
 
       resolve(displayedData);
-      dataCache.put(cacheKey, displayedData);
+      TimedLocalStorage.store(cacheKey, displayedData);
     });
   });
 }
@@ -120,7 +122,7 @@ export function getSummary() {
 export function getProvinces(geographicOnly = true) {
   return new Promise((resolve, reject) => {
     const cacheKey = createCacheKey([PROVINCIAL_CACHE_KEY, geographicOnly]);
-    const cachedData = dataCache.get(cacheKey);
+    const cachedData = TimedLocalStorage.get(cacheKey);
     if (cachedData !== undefined) {
       resolve(cachedData);
       return;
@@ -130,7 +132,7 @@ export function getProvinces(geographicOnly = true) {
       API_LOCATIONS.provinces,
       (result) => {
         resolve(result.data);
-        dataCache.put(cacheKey, result.data);
+        TimedLocalStorage.store(cacheKey, result.data);
       },
       reject,
       { geo_only: geographicOnly }
@@ -167,7 +169,7 @@ export function getProvincialReport(
   ]);
 
   return new Promise((resolve, reject) => {
-    const cacheItem = dataCache.get(cacheKey);
+    const cacheItem = TimedLocalStorage.get(cacheKey);
     if (cacheItem !== undefined) {
       resolve(cacheItem);
       return;
@@ -177,7 +179,7 @@ export function getProvincialReport(
       `${API_LOCATIONS.reports}/province/${provinceCode}`,
       (result) => {
         resolve(result.data);
-        dataCache.put(cacheKey, result.data);
+        TimedLocalStorage.store(cacheKey, result.data);
       },
       reject,
       params
@@ -187,10 +189,21 @@ export function getProvincialReport(
 
 export function getProvincialVaccinations(provincialCode) {
   return new Promise((resolve, reject) => {
+    const cacheKey = createCacheKey([
+      PROVINCIAL_VACCINATIONS_CACHE_KEY,
+      provincialCode,
+    ]);
+    const cachedData = TimedLocalStorage.get(cacheKey);
+    if (cachedData !== undefined) {
+      resolve(cachedData);
+      return;
+    }
+
     _get(
       `${API_LOCATIONS.vaccine_groups}/province/${provincialCode}`,
       (result) => {
         resolve(result.data);
+        TimedLocalStorage.store(cacheKey, result.data);
       },
       reject
     );
