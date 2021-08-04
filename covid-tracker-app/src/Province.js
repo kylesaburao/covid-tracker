@@ -114,11 +114,11 @@ export default function Province({ provincialData }) {
   return (
     <Grid
       container
-      spacing={0}
+      spacing={1}
       direction="column"
       justifyContent="space-around"
       alignItems="flex-start"
-      style={{ padding: "1em", marginLeft: "0.25em" }}
+      style={{ padding: ".5em" }}
     >
       <Grid container item>
         <StatusBar
