@@ -69,7 +69,6 @@ function _signalBusy(isBusy) {
 
 function _get(location, onSuccess, onFailure, params = {}) {
   _signalBusy(true);
-  console.log("BUSY", location, params);
 
   axiosAPI({ url: _constructURL(location), method: "get", params: params })
     .then(async (result) => {
