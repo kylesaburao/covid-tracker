@@ -19,6 +19,24 @@ function App() {
     setApiBusy(state);
   });
 
+  const selectProvince = (
+    provinceCode = undefined,
+    defaultCode = undefined
+  ) => {
+    const localStorage = window.localStorage;
+    const previouslySelectedCode = localStorage.getItem("selectedProvince");
+
+    if (provinceCode) {
+      setSelectedProvince(provinceCode);
+      localStorage.setItem("selectedProvince", provinceCode);
+    } else if (previouslySelectedCode && provinceCode === undefined) {
+      setSelectedProvince(previouslySelectedCode);
+    } else if (defaultCode) {
+      setSelectedProvince(defaultCode);
+      localStorage.setItem("selectedProvince", defaultCode);
+    }
+  };
+
   useEffect(() => {
     api.getProvinces().then((data) => {
       const compareProvince = (province1, province2) =>
@@ -26,7 +44,11 @@ function App() {
       data.sort(compareProvince);
 
       setProvincialData(data);
-      setSelectedProvince(data[0].code);
+
+      if (data.length > 0) {
+        selectProvince(undefined, data[0].code);
+      }
+
       setProvincialMap(
         data.reduce((dict, current) => {
           dict[current.code] = current;
@@ -77,7 +99,7 @@ function App() {
           <ProvincialList
             provinces={provincialData}
             selectedProvince={selectedProvince}
-            setSelectedProvince={setSelectedProvince}
+            setSelectedProvince={selectProvince}
           ></ProvincialList>
         </Grid>
         <Grid item>

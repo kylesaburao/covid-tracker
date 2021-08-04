@@ -67,7 +67,6 @@ function _signalBusy(isBusy) {
 }
 
 function _get(location, onSuccess, onFailure, params = {}) {
-  console.log("GET", currentTime(), location, params);
   _signalBusy(true);
 
   axiosAPI({ url: _constructURL(location), method: "get", params: params })
@@ -97,6 +96,13 @@ export function getSummary() {
   };
 
   return new Promise((resolve, reject) => {
+    const cacheKey = createCacheKey([SUMMARY_CACHE_KEY]);
+    const cachedData = dataCache.get(cacheKey);
+    if (cachedData !== undefined) {
+      resolve(cachedData);
+      return;
+    }
+
     _get(API_LOCATIONS.summary, (result) => {
       const data = result.data.data[0];
       const displayedData = {};
@@ -106,6 +112,7 @@ export function getSummary() {
       });
 
       resolve(displayedData);
+      dataCache.put(cacheKey, displayedData);
     });
   });
 }
