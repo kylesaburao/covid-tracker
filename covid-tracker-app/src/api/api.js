@@ -170,7 +170,6 @@ export function getProvincialReport(
       `${API_LOCATIONS.reports}/province/${provinceCode}`,
       (result) => {
         resolve(result.data);
-
         dataCache.put(cacheKey, result.data);
       },
       reject,

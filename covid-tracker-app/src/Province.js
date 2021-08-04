@@ -147,7 +147,6 @@ export default function Province({ provincialData }) {
             <DataGraph
               statistics={currentReport}
               keys={[
-                // "total_vaccinations",
                 "total_cases",
                 "total_criticals",
                 "total_hospitalizations",

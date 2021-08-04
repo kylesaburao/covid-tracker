@@ -21,6 +21,7 @@ function StatusBarItem({
   report,
   isUpdated = false,
   isIncreaseBad = true,
+  isDarkMode = false,
 }) {
   const delta = report.getChange(changeKey, 1).average;
   const changeText = `Δ ${isUpdated ? _annotateValueSign(delta) : "N/A"}`;
@@ -29,7 +30,9 @@ function StatusBarItem({
     ? isIncreaseBad && delta > 0
       ? "red"
       : "green"
-    : "black";
+    : !isDarkMode
+    ? "black"
+    : "white";
 
   return (
     <div className="status-item">
@@ -44,18 +47,19 @@ function StatusBarItem({
 
 export default function StatusBar({ report, updateTime, isUpdated = false }) {
   const keys = [
+    ["hospitalizations", true, true],
+    ["criticals", true, true],
     ["cases", true],
     ["tests", false],
     ["vaccinations", false],
-    ["hospitalizations", true],
-    ["criticals", true],
     ["recoveries", false],
     ["fatalities", true],
-  ].map(([x, isIncreaseBad]) => [
+  ].map(([x, isIncreaseBad, isDarkMode]) => [
     x,
     `total_${x}`,
     `change_${x}`,
     isIncreaseBad,
+    isDarkMode,
   ]);
 
   const reportText =
@@ -69,12 +73,20 @@ export default function StatusBar({ report, updateTime, isUpdated = false }) {
         <Grid
           spacing={2}
           container
-          justifyContent="space-between"
+          justifyContent="flex-start"
           direction="row"
           alignItems="stretch"
         >
-          {keys.map(([key, totalKey, changeKey, isIncreaseBad], index) => (
-            <Grid item key={key}>
+          {keys.map(([key, totalKey, changeKey, isIncreaseBad, isDarkMode]) => (
+            <Grid
+              item
+              xs
+              key={key}
+              style={{
+                backgroundColor: isDarkMode ? "#263238" : "white",
+                color: isDarkMode ? "white" : "black",
+              }}
+            >
               <StatusBarItem
                 dataKey={key}
                 totalKey={totalKey}
@@ -82,6 +94,7 @@ export default function StatusBar({ report, updateTime, isUpdated = false }) {
                 report={report}
                 isUpdated={isUpdated}
                 isIncreaseBad={isIncreaseBad}
+                isDarkMode={isDarkMode}
               />{" "}
             </Grid>
           ))}

@@ -66,7 +66,13 @@ function App() {
       </Grid>
 
       {/* Province list */}
-      <Grid container item direction="column" xs={3}>
+      <Grid
+        container
+        item
+        direction="column"
+        xs={3}
+        style={{ minWidth: "16em" }}
+      >
         <Grid item>
           <ProvincialList
             provinces={provincialData}
