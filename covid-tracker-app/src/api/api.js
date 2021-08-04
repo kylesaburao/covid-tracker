@@ -80,6 +80,7 @@ function _get(location, onSuccess, onFailure, params = {}) {
         onFailure(error);
       }
       console.log(`API ERROR: ${error}`);
+      alert("Unable to connect");
       _signalBusy(false);
     });
 }
