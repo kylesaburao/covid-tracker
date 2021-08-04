@@ -5,7 +5,6 @@ export function store(key, item, ttl = 1000 * 60) {
   const data = { item: item, expiration: time };
 
   storage.setItem(key, JSON.stringify(data));
-  console.log('Storing', key);
 }
 
 export function get(key) {
@@ -23,6 +22,5 @@ export function get(key) {
     return undefined;
   }
 
-  console.log('Cache hit', key);
   return object.item;
 }
