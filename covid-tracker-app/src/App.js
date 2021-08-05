@@ -9,11 +9,26 @@ function LoadingSpinner({ isLoading }) {
   return isLoading && <CircularProgress />;
 }
 
+function ScreenLoading({ progress }) {
+  return (
+    <Grid
+      container
+      direction="row"
+      justifyContent="center"
+      alignItems="center"
+      style={{ height: "100vh" }}
+    >
+      <CircularProgress variant="determinate" value={progress} />
+    </Grid>
+  );
+}
+
 function App() {
   const [provincialData, setProvincialData] = useState([]);
   const [provincialMap, setProvincialMap] = useState({});
   const [selectedProvince, setSelectedProvince] = useState("");
   const [apiBusy, setApiBusy] = useState(false);
+  const [readyStatus, setReadyStatus] = useState(0);
 
   api.registerBusySignaller((state) => {
     setApiBusy(state);
@@ -39,6 +54,7 @@ function App() {
 
   useEffect(() => {
     api.getProvinces().then((data) => {
+      setReadyStatus(50);
       const compareProvince = (province1, province2) =>
         province1.name.localeCompare(province2.name);
       data.sort(compareProvince);
@@ -55,10 +71,18 @@ function App() {
           return dict;
         }, {})
       );
+
+      // Wait for in-memory data to be ready
+      setTimeout(() => {
+        setReadyStatus(75);
+        setTimeout(() => setReadyStatus(100), 100);
+      }, 50);
     });
   }, []);
 
-  return (
+  return readyStatus !== 100 ? (
+    <ScreenLoading progress={readyStatus} />
+  ) : (
     <Grid
       container
       style={{ margin: 0, padding: 0, height: "100vh" }}
