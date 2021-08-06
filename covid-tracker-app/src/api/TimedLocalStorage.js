@@ -4,7 +4,13 @@ export function store(key, item, ttl = 1000 * 60) {
   const time = Date.now() + ttl;
   const data = { item: item, expiration: time };
 
-  storage.setItem(key, JSON.stringify(data));
+  try {
+    storage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    console.error("Clearing localStorage", e);
+    storage.clear();
+    storage.setItem(key, JSON.stringify(data));
+  }
 }
 
 export function get(key) {
