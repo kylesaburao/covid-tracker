@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
 import { Card } from "@material-ui/core";
-import * as api from "../api/api";
-
+import React, { useEffect, useState } from "react";
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
-  Tooltip,
   Legend,
   ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
+import * as api from "../api/api";
 
 function createVaccinationDataset(ageData) {
   const extractFirstDigit = (str) => {

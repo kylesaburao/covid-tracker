@@ -116,8 +116,8 @@ function App() {
         container
         item
         direction="column"
-        xs={3}
-        style={{ minWidth: "16em" }}
+        xs={2}
+        style={{ minWidth: "15em" }}
       >
         <Grid item>
           <ProvincialList

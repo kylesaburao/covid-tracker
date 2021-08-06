@@ -5,6 +5,7 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
+  Typography,
 } from "@material-ui/core";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
@@ -22,6 +23,17 @@ function createDefaultKeyState(report) {
   return state;
 }
 
+function CapitalizeFirstLetter(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function PrettifyKey(key) {
+  return key
+    .split("_")
+    .map((x) => CapitalizeFirstLetter(x))
+    .join(" ");
+}
+
 function KeyToggle({ keyState, handleKeyEvent }) {
   const keys = Object.keys(keyState);
 
@@ -31,7 +43,7 @@ function KeyToggle({ keyState, handleKeyEvent }) {
         return (
           <FormControlLabel
             key={key}
-            label={key}
+            label={<Typography variant="caption">{PrettifyKey(key)}</Typography>}
             control={
               <Checkbox
                 name={key}

@@ -55,7 +55,7 @@ export default function ReportGraph({
   const keys = Object.keys(keyState).filter((key) => keyState[key]);
 
   return (
-    <ResponsiveContainer width="95%" height={400}>
+    <ResponsiveContainer width="95%" height={350}>
       <LineChart
         data={serializeData(keys, statistics, todayReported)}
         style={{ margin: "0.5em" }}

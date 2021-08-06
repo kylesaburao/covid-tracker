@@ -65,8 +65,7 @@ export default function Province({ provincialData }) {
       </Grid>
 
       <Grid container item>
-        <Grid item xs={6}>
-          <h3>Vaccinations</h3>
+        <Grid item xs>
           <VaccinationData provincialData={provincialData} />
         </Grid>
       </Grid>
