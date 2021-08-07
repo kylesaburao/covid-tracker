@@ -30,10 +30,6 @@ function App() {
   const [apiBusy, setApiBusy] = useState(false);
   const [readyStatus, setReadyStatus] = useState(0);
 
-  api.registerBusySignaller((state) => {
-    setApiBusy(state);
-  });
-
   const selectProvince = (
     provinceCode = undefined,
     defaultCode = undefined
@@ -53,6 +49,10 @@ function App() {
   };
 
   useEffect(() => {
+    api.registerBusySignaller((state) => {
+      setApiBusy(state);
+    });
+
     api.getProvinces().then((data) => {
       setReadyStatus(50);
       const compareProvince = (province1, province2) =>
