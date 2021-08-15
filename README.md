@@ -3,6 +3,7 @@
 ## About
 
 Uses the Canadian data API provided from `https://api.covid19tracker.ca/docs/1.0/overview`
+
 ![image](https://user-images.githubusercontent.com/20251568/129493761-5c368261-008c-43a9-8cbd-5471a865d8c9.png)
 
 ## Dependencies
