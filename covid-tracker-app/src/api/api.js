@@ -27,8 +27,8 @@ const API_LOCATIONS = {
 const axiosCache = setupCache({ maxAge: 1000 * 60, exclude: { query: false } });
 const axiosAPI = axios.create({ adapter: axiosCache.adapter });
 
-function createCacheKey(items) {
-  return items.map((item) => JSON.stringify(item)).join(".");
+function createCacheKey(...items) {
+  return items.map((item) => JSON.stringify(item), "").join(".");
 }
 
 function _constructURL(location) {
@@ -98,7 +98,7 @@ export function getSummary() {
   };
 
   return new Promise((resolve, reject) => {
-    const cacheKey = createCacheKey([SUMMARY_CACHE_KEY]);
+    const cacheKey = createCacheKey(SUMMARY_CACHE_KEY);
     const cachedData = TimedLocalStorage.get(cacheKey);
     if (cachedData !== undefined) {
       resolve(cachedData);
@@ -121,7 +121,7 @@ export function getSummary() {
 
 export function getProvinces(geographicOnly = true) {
   return new Promise((resolve, reject) => {
-    const cacheKey = createCacheKey([PROVINCIAL_CACHE_KEY, geographicOnly]);
+    const cacheKey = createCacheKey(PROVINCIAL_CACHE_KEY, geographicOnly);
     const cachedData = TimedLocalStorage.get(cacheKey);
     if (cachedData !== undefined) {
       resolve(cachedData);
@@ -162,11 +162,11 @@ export function getProvincialReport(
   }
 
   params = { ...params, fill_dates: false };
-  const cacheKey = createCacheKey([
+  const cacheKey = createCacheKey(
     PROVINCIAL_REPORT_CACHE_KEY,
     provinceCode,
-    params,
-  ]);
+    params
+  );
 
   return new Promise((resolve, reject) => {
     const cacheItem = TimedLocalStorage.get(cacheKey);
@@ -189,10 +189,10 @@ export function getProvincialReport(
 
 export function getProvincialVaccinations(provincialCode) {
   return new Promise((resolve, reject) => {
-    const cacheKey = createCacheKey([
+    const cacheKey = createCacheKey(
       PROVINCIAL_VACCINATIONS_CACHE_KEY,
-      provincialCode,
-    ]);
+      provincialCode
+    );
     const cachedData = TimedLocalStorage.get(cacheKey);
     if (cachedData !== undefined) {
       resolve(cachedData);
