@@ -6,7 +6,11 @@ import {
   FormGroup,
   Grid,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import React, { useState } from "react";
@@ -43,7 +47,9 @@ function KeyToggle({ keyState, handleKeyEvent }) {
         return (
           <FormControlLabel
             key={key}
-            label={<Typography variant="caption">{PrettifyKey(key)}</Typography>}
+            label={
+              <Typography variant="caption">{PrettifyKey(key)}</Typography>
+            }
             control={
               <Checkbox
                 name={key}
@@ -82,20 +88,6 @@ export function ReportSection({
           alignItems="stretch"
         >
           <Grid item>
-            <ToggleButtonGroup
-              value={windowSize}
-              size="small"
-              onChange={handleWindowChange}
-              exclusive
-            >
-              {windowSizes.map((value) => (
-                <ToggleButton key={value} value={value}>
-                  {value === windowSize ? `${value} days` : value}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </Grid>
-          <Grid item>
             <ReportGraph
               statistics={report}
               keyState={keyState}
@@ -103,9 +95,35 @@ export function ReportSection({
             ></ReportGraph>
           </Grid>
           <Grid container item>
-            <Grid item>
-              <KeyToggle keyState={keyState} handleKeyEvent={handleKeyEvent} />
-            </Grid>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <h4>Controls</h4>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Grid container item>
+                  <Grid item>
+                    <ToggleButtonGroup
+                      value={windowSize}
+                      size="small"
+                      onChange={handleWindowChange}
+                      exclusive
+                    >
+                      {windowSizes.map((value) => (
+                        <ToggleButton key={value} value={value}>
+                          {value === windowSize ? `${value} days` : value}
+                        </ToggleButton>
+                      ))}
+                    </ToggleButtonGroup>
+                  </Grid>
+                  <Grid item>
+                    <KeyToggle
+                      keyState={keyState}
+                      handleKeyEvent={handleKeyEvent}
+                    />
+                  </Grid>
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
           </Grid>
         </Grid>
       </CardContent>

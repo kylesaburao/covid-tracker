@@ -10,12 +10,12 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 
 export default function HistoricalTable(report) {
-  const createColumn = (label, align = "left") => {
+  const createColumn = (label, align = "right") => {
     return { id: label.toLowerCase(), align, label, minWidth: 100 };
   };
 
   const columns = [
-    createColumn("Date", "right"),
+    createColumn("Date", "left"),
     createColumn("Hospitalizations"),
     createColumn("Criticals"),
     createColumn("Cases"),

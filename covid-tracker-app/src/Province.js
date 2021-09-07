@@ -1,4 +1,5 @@
 import { Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles"
 import React, { useEffect, useState } from "react";
 import * as api from "./api/api";
 import Statistics from "./api/statistics";
@@ -11,7 +12,15 @@ import HistoricalTable from "./province/HistoricalTable";
 const REPORTED_STATUS = "Reported";
 const DEFAULT_DAY_WINDOW = 7;
 
+const useStyles = makeStyles({
+  section: {
+    marginTop: "1.5em"
+  }
+})
+
 export default function Province({ provincialData }) {
+  const classes = useStyles();
+
   const updateTime = new Date(Date.parse(provincialData.updated_at));
   const dataReported = provincialData.data_status.includes(REPORTED_STATUS);
 
@@ -44,7 +53,7 @@ export default function Province({ provincialData }) {
       direction="column"
       justifyContent="space-around"
       alignItems="stretch"
-      style={{ padding: "1em" }}
+      style={{ padding: "1.5em" }}
     >
       <Grid container item>
         <StatusBar
@@ -54,7 +63,7 @@ export default function Province({ provincialData }) {
         />
       </Grid>
 
-      <Grid container item>
+      <Grid container item className={classes.section}>
         {!currentReport.EMPTY && (
           <ReportSection
             report={currentReport}
@@ -65,11 +74,11 @@ export default function Province({ provincialData }) {
         )}
       </Grid>
 
-      <Grid item>
+      <Grid item className={classes.section}>
         <HistoricalTable report={currentReport}></HistoricalTable>
       </Grid>
 
-      <Grid container item>
+      <Grid container item className={classes.section}>
         <Grid item xs>
           <VaccinationData provincialData={provincialData} />
         </Grid>
