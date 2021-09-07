@@ -6,6 +6,7 @@ import "./Province.css";
 import { ReportSection } from "./province/ReportSection";
 import StatusBar from "./province/StatusBar";
 import VaccinationData from "./province/VaccinationData";
+import HistoricalTable from "./province/HistoricalTable";
 
 const REPORTED_STATUS = "Reported";
 const DEFAULT_DAY_WINDOW = 7;
@@ -62,6 +63,10 @@ export default function Province({ provincialData }) {
             handleWindowChange={handleDayWindowChange}
           ></ReportSection>
         )}
+      </Grid>
+
+      <Grid item>
+        <HistoricalTable report={currentReport}></HistoricalTable>
       </Grid>
 
       <Grid container item>
