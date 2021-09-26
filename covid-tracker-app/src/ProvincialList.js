@@ -1,4 +1,4 @@
-import { Card, MenuItem, MenuList } from "@material-ui/core";
+import { Card, MenuItem, MenuList } from "@mui/material";
 import React from "react";
 
 export default function ProvincialList({

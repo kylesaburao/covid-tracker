@@ -6,9 +6,9 @@ import {
   FormGroup,
   Grid,
   Typography,
-} from "@material-ui/core";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+} from "@mui/material";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import React, { useState } from "react";
 import ReportGraph from "./ReportGraph";
 
